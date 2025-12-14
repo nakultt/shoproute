@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../config/theme/app_colors.dart';
 import '../../../../config/theme/app_text_styles.dart';
-import '../../../../config/theme/app_theme.dart';
 import '../../../../config/routes/app_router.dart';
 import '../../../../core/widgets/animated_button.dart';
 
@@ -68,6 +68,69 @@ class _LoginPageState
                 curve: Curves.elasticIn,
               ),
             );
+    _loadRememberMe();
+  }
+
+  Future<
+    void
+  >
+  _loadRememberMe() async {
+    final prefs = await SharedPreferences.getInstance();
+    final remembered =
+        prefs.getBool(
+          'rememberMe',
+        ) ??
+        false;
+    if (remembered) {
+      final savedEmail =
+          prefs.getString(
+            'savedEmail',
+          ) ??
+          '';
+      final savedPassword =
+          prefs.getString(
+            'savedPassword',
+          ) ??
+          '';
+      setState(
+        () {
+          _rememberMe = remembered;
+          _emailController.text = savedEmail;
+          _passwordController.text = savedPassword;
+        },
+      );
+    }
+  }
+
+  Future<
+    void
+  >
+  _saveRememberMe() async {
+    final prefs = await SharedPreferences.getInstance();
+    if (_rememberMe) {
+      await prefs.setBool(
+        'rememberMe',
+        true,
+      );
+      await prefs.setString(
+        'savedEmail',
+        _emailController.text,
+      );
+      await prefs.setString(
+        'savedPassword',
+        _passwordController.text,
+      );
+    } else {
+      await prefs.remove(
+        'rememberMe',
+      );
+      await prefs.remove(
+        'savedEmail',
+      );
+      await prefs.remove(
+        'savedPassword',
+      );
+    }
   }
 
   @override
@@ -103,6 +166,9 @@ class _LoginPageState
     );
 
     try {
+      // Save remember me preference
+      await _saveRememberMe();
+
       // TODO: Implement actual login API call
       await Future.delayed(
         const Duration(
@@ -431,7 +497,7 @@ class _LoginPageState
                         horizontal: 16,
                       ),
                       child: Text(
-                        'or',
+                        'or continue with',
                         style: AppTextStyles.bodySmall(),
                       ),
                     ),
@@ -446,31 +512,28 @@ class _LoginPageState
                   height: 24,
                 ),
 
-                // Biometric login
-                AnimatedButton(
-                  onPressed: () {
-                    // TODO: Implement biometric auth
-                  },
-                  isOutlined: true,
-                  backgroundColor: AppColors.textPrimaryLight,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Icon(
-                        Icons.fingerprint,
-                        size: 24,
-                      ),
-                      const SizedBox(
-                        width: 8,
-                      ),
-                      Text(
-                        'Sign in with Biometrics',
-                        style: AppTextStyles.buttonMedium(
-                          color: AppColors.textPrimaryLight,
-                        ),
-                      ),
-                    ],
-                  ),
+                // Social login buttons
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    _SocialLoginButton(
+                      icon: Icons.g_mobiledata,
+                      label: 'Google',
+                      onTap: () {
+                        // TODO: Implement Google sign in
+                      },
+                    ),
+                    const SizedBox(
+                      width: 16,
+                    ),
+                    _SocialLoginButton(
+                      icon: Icons.apple,
+                      label: 'Apple',
+                      onTap: () {
+                        // TODO: Implement Apple sign in
+                      },
+                    ),
+                  ],
                 ),
                 const SizedBox(
                   height: 32,
@@ -502,6 +565,60 @@ class _LoginPageState
               ],
             ),
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class _SocialLoginButton
+    extends
+        StatelessWidget {
+  final IconData icon;
+  final String label;
+  final VoidCallback onTap;
+
+  const _SocialLoginButton({
+    required this.icon,
+    required this.label,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(
+    BuildContext context,
+  ) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(
+          horizontal: 24,
+          vertical: 12,
+        ),
+        decoration: BoxDecoration(
+          color: AppColors.surfaceLight,
+          borderRadius: BorderRadius.circular(
+            12,
+          ),
+          border: Border.all(
+            color: AppColors.borderLight,
+          ),
+        ),
+        child: Row(
+          children: [
+            Icon(
+              icon,
+              size: 24,
+              color: AppColors.textPrimaryLight,
+            ),
+            const SizedBox(
+              width: 8,
+            ),
+            Text(
+              label,
+              style: AppTextStyles.labelMedium(),
+            ),
+          ],
         ),
       ),
     );

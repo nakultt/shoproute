@@ -31,6 +31,206 @@ class _HomePageState
   int _selectedCategoryIndex = 0;
   bool _isGridView = true;
   bool _isLoading = true;
+  int _cartItemCount = 3;
+
+  // Sample product data with categories
+  final List<
+    Map<
+      String,
+      dynamic
+    >
+  >
+  _allProducts = [
+    {
+      'id': 0,
+      'name': 'Organic Milk 1L',
+      'price': '4.99',
+      'store': 'Fresh Mart',
+      'rating': '4.5',
+      'distance': '1.2 km',
+      'category': 5,
+      'image': '🥛',
+      'inStock': true,
+    },
+    {
+      'id': 1,
+      'name': 'Whole Wheat Bread',
+      'price': '3.49',
+      'store': 'QuickShop',
+      'rating': '4.3',
+      'distance': '0.8 km',
+      'category': 6,
+      'image': '🍞',
+      'inStock': true,
+    },
+    {
+      'id': 2,
+      'name': 'Free Range Eggs (12)',
+      'price': '5.99',
+      'store': 'Fresh Mart',
+      'rating': '4.7',
+      'distance': '1.2 km',
+      'category': 5,
+      'image': '🥚',
+      'inStock': true,
+    },
+    {
+      'id': 3,
+      'name': 'Chicken Breast 500g',
+      'price': '12.99',
+      'store': 'Health Foods',
+      'rating': '4.6',
+      'distance': '2.1 km',
+      'category': 7,
+      'image': '🍗',
+      'inStock': true,
+    },
+    {
+      'id': 4,
+      'name': 'Fresh Orange Juice',
+      'price': '3.99',
+      'store': 'QuickShop',
+      'rating': '4.4',
+      'distance': '0.8 km',
+      'category': 8,
+      'image': '🧃',
+      'inStock': true,
+    },
+    {
+      'id': 5,
+      'name': 'Organic Spinach',
+      'price': '2.99',
+      'store': 'Fresh Mart',
+      'rating': '4.2',
+      'distance': '1.2 km',
+      'category': 5,
+      'image': '🥬',
+      'inStock': true,
+    },
+    {
+      'id': 6,
+      'name': 'Greek Yogurt',
+      'price': '4.49',
+      'store': 'Health Foods',
+      'rating': '4.8',
+      'distance': '2.1 km',
+      'category': 5,
+      'image': '🥛',
+      'inStock': true,
+    },
+    {
+      'id': 7,
+      'name': 'Salmon Fillet',
+      'price': '15.99',
+      'store': 'Fresh Mart',
+      'rating': '4.9',
+      'distance': '1.2 km',
+      'category': 7,
+      'image': '🐟',
+      'inStock': false,
+    },
+    {
+      'id': 8,
+      'name': 'Shampoo',
+      'price': '8.99',
+      'store': 'SuperStore',
+      'rating': '4.1',
+      'distance': '1.5 km',
+      'category': 9,
+      'image': '🧴',
+      'inStock': true,
+    },
+    {
+      'id': 9,
+      'name': 'Cleaning Spray',
+      'price': '5.49',
+      'store': 'SuperStore',
+      'rating': '4.0',
+      'distance': '1.5 km',
+      'category': 10,
+      'image': '🧹',
+      'inStock': true,
+    },
+  ];
+
+  List<
+    Map<
+      String,
+      dynamic
+    >
+  >
+  get _filteredProducts {
+    final selectedCategory = AppConstants.defaultCategories[_selectedCategoryIndex];
+    final categoryId =
+        selectedCategory['id']
+            as int;
+
+    // Special categories (0-4) show all or filtered products
+    if (categoryId ==
+        0) {
+      // Hot Discounts - show products with high rating
+      return _allProducts
+          .where(
+            (
+              p,
+            ) =>
+                double.parse(
+                  p['rating'],
+                ) >=
+                4.5,
+          )
+          .toList();
+    } else if (categoryId ==
+        1) {
+      // Seasonal Offers - show random selection
+      return _allProducts
+          .take(
+            4,
+          )
+          .toList();
+    } else if (categoryId ==
+        2) {
+      // Most Bought - show all
+      return _allProducts;
+    } else if (categoryId ==
+        3) {
+      // Similar Items - show based on first product category
+      return _allProducts
+          .where(
+            (
+              p,
+            ) =>
+                p['category'] ==
+                5,
+          )
+          .toList();
+    } else if (categoryId ==
+        4) {
+      // Top Rated
+      return _allProducts
+          .where(
+            (
+              p,
+            ) =>
+                double.parse(
+                  p['rating'],
+                ) >=
+                4.6,
+          )
+          .toList();
+    }
+
+    // Regular categories filter by category ID
+    return _allProducts
+        .where(
+          (
+            p,
+          ) =>
+              p['category'] ==
+              categoryId,
+        )
+        .toList();
+  }
 
   @override
   void initState() {
@@ -58,8 +258,15 @@ class _HomePageState
   Widget build(
     BuildContext context,
   ) {
+    final isDark =
+        Theme.of(
+          context,
+        ).brightness ==
+        Brightness.dark;
     return Scaffold(
-      backgroundColor: AppColors.backgroundLight,
+      backgroundColor: isDark
+          ? AppColors.backgroundDark
+          : AppColors.backgroundLight,
       body: SafeArea(
         child: RefreshIndicator(
           onRefresh: _loadData,
@@ -90,6 +297,11 @@ class _HomePageState
   }
 
   Widget _buildTopBar() {
+    final isDark =
+        Theme.of(
+          context,
+        ).brightness ==
+        Brightness.dark;
     return Padding(
       padding: const EdgeInsets.all(
         16,
@@ -125,7 +337,9 @@ class _HomePageState
           Expanded(
             child: GestureDetector(
               onTap: () {
-                // TODO: Navigate to search page
+                context.push(
+                  AppRoutes.search,
+                );
               },
               child: Container(
                 height: 44,
@@ -133,19 +347,25 @@ class _HomePageState
                   horizontal: 16,
                 ),
                 decoration: BoxDecoration(
-                  color: AppColors.surfaceLight,
+                  color: isDark
+                      ? AppColors.surfaceDark
+                      : AppColors.surfaceLight,
                   borderRadius: BorderRadius.circular(
                     12,
                   ),
                   border: Border.all(
-                    color: AppColors.borderLight,
+                    color: isDark
+                        ? AppColors.borderDark
+                        : AppColors.borderLight,
                   ),
                 ),
                 child: Row(
                   children: [
-                    const Icon(
+                    Icon(
                       Icons.search,
-                      color: AppColors.textTertiaryLight,
+                      color: isDark
+                          ? AppColors.textTertiaryDark
+                          : AppColors.textTertiaryLight,
                       size: 20,
                     ),
                     const SizedBox(
@@ -154,7 +374,9 @@ class _HomePageState
                     Text(
                       'Search products, stores...',
                       style: AppTextStyles.bodyMedium(
-                        color: AppColors.textTertiaryLight,
+                        color: isDark
+                            ? AppColors.textTertiaryDark
+                            : AppColors.textTertiaryLight,
                       ),
                     ),
                   ],
@@ -166,42 +388,57 @@ class _HomePageState
             width: 12,
           ),
           // Cart Icon
-          Stack(
-            children: [
-              Container(
-                width: 44,
-                height: 44,
-                decoration: BoxDecoration(
-                  color: AppColors.surfaceLight,
-                  shape: BoxShape.circle,
-                  border: Border.all(
-                    color: AppColors.borderLight,
-                  ),
-                ),
-                child: const Icon(
-                  Icons.shopping_cart_outlined,
-                  color: AppColors.textPrimaryLight,
-                  size: 22,
-                ),
-              ),
-              Positioned(
-                right: 0,
-                top: 0,
-                child: Container(
-                  padding: const EdgeInsets.all(
-                    4,
-                  ),
-                  decoration: const BoxDecoration(
-                    color: AppColors.error,
+          GestureDetector(
+            onTap: () {
+              context.push(
+                AppRoutes.cart,
+              );
+            },
+            child: Stack(
+              children: [
+                Container(
+                  width: 44,
+                  height: 44,
+                  decoration: BoxDecoration(
+                    color: isDark
+                        ? AppColors.surfaceDark
+                        : AppColors.surfaceLight,
                     shape: BoxShape.circle,
+                    border: Border.all(
+                      color: isDark
+                          ? AppColors.borderDark
+                          : AppColors.borderLight,
+                    ),
                   ),
-                  child: Text(
-                    '3',
-                    style: AppTextStyles.badge(),
+                  child: Icon(
+                    Icons.shopping_cart_outlined,
+                    color: isDark
+                        ? AppColors.textPrimaryDark
+                        : AppColors.textPrimaryLight,
+                    size: 22,
                   ),
                 ),
-              ),
-            ],
+                if (_cartItemCount >
+                    0)
+                  Positioned(
+                    right: 0,
+                    top: 0,
+                    child: Container(
+                      padding: const EdgeInsets.all(
+                        4,
+                      ),
+                      decoration: const BoxDecoration(
+                        color: AppColors.error,
+                        shape: BoxShape.circle,
+                      ),
+                      child: Text(
+                        '$_cartItemCount',
+                        style: AppTextStyles.badge(),
+                      ),
+                    ),
+                  ),
+              ],
+            ),
           ),
         ],
       ),
@@ -209,6 +446,11 @@ class _HomePageState
   }
 
   Widget _buildCategories() {
+    final isDark =
+        Theme.of(
+          context,
+        ).brightness ==
+        Brightness.dark;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -218,7 +460,11 @@ class _HomePageState
           ),
           child: Text(
             'Categories',
-            style: AppTextStyles.headlineSmall(),
+            style: AppTextStyles.headlineSmall(
+              color: isDark
+                  ? AppColors.textPrimaryDark
+                  : null,
+            ),
           ),
         ),
         const SizedBox(
@@ -255,6 +501,8 @@ class _HomePageState
                       decoration: BoxDecoration(
                         color: isSelected
                             ? AppColors.primary
+                            : isDark
+                            ? AppColors.surfaceDark
                             : AppColors.surfaceLight,
                         borderRadius: BorderRadius.circular(
                           16,
@@ -262,6 +510,8 @@ class _HomePageState
                         border: Border.all(
                           color: isSelected
                               ? AppColors.primary
+                              : isDark
+                              ? AppColors.borderDark
                               : AppColors.borderLight,
                           width: isSelected
                               ? 2
@@ -288,6 +538,8 @@ class _HomePageState
                             style: AppTextStyles.labelSmall(
                               color: isSelected
                                   ? Colors.white
+                                  : isDark
+                                  ? AppColors.textSecondaryDark
                                   : AppColors.textSecondaryLight,
                             ),
                             textAlign: TextAlign.center,
@@ -306,6 +558,11 @@ class _HomePageState
   }
 
   Widget _buildViewToggle() {
+    final isDark =
+        Theme.of(
+          context,
+        ).brightness ==
+        Brightness.dark;
     return Padding(
       padding: const EdgeInsets.all(
         16,
@@ -314,8 +571,15 @@ class _HomePageState
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
-            'Products',
-            style: AppTextStyles.headlineSmall(),
+            _selectedCategoryIndex ==
+                    0
+                ? 'All Products'
+                : '${AppConstants.defaultCategories[_selectedCategoryIndex]['name']} Products',
+            style: AppTextStyles.headlineSmall(
+              color: isDark
+                  ? AppColors.textPrimaryDark
+                  : null,
+            ),
           ),
           Row(
             children: [
@@ -340,6 +604,8 @@ class _HomePageState
                     size: 20,
                     color: _isGridView
                         ? Colors.white
+                        : isDark
+                        ? AppColors.textTertiaryDark
                         : AppColors.textTertiaryLight,
                   ),
                 ),
@@ -368,6 +634,8 @@ class _HomePageState
                     size: 20,
                     color: !_isGridView
                         ? Colors.white
+                        : isDark
+                        ? AppColors.textTertiaryDark
                         : AppColors.textTertiaryLight,
                   ),
                 ),
@@ -403,33 +671,37 @@ class _HomePageState
   }
 
   Widget _buildProductGrid() {
-    // Sample product data
-    final products = List.generate(
-      10,
-      (
-        index,
-      ) => {
-        'id': index,
-        'name': 'Product ${index + 1}',
-        'price':
-            (9.99 +
-                    index *
-                        2)
-                .toStringAsFixed(
-                  2,
+    final products = _filteredProducts;
+
+    if (products.isEmpty) {
+      return SliverToBoxAdapter(
+        child: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(
+              32,
+            ),
+            child: Column(
+              children: [
+                Icon(
+                  Icons.inventory_2_outlined,
+                  size: 64,
+                  color: AppColors.textTertiaryLight,
                 ),
-        'store': 'Store ${index % 3 + 1}',
-        'rating':
-            (3.5 +
-                    (index %
-                            3) *
-                        0.5)
-                .toStringAsFixed(
-                  1,
+                const SizedBox(
+                  height: 16,
                 ),
-        'distance': '${(0.5 + index * 0.3).toStringAsFixed(1)} km',
-      },
-    );
+                Text(
+                  'No products found in this category',
+                  style: AppTextStyles.bodyLarge(
+                    color: AppColors.textSecondaryLight,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
 
     return SliverPadding(
       padding: const EdgeInsets.symmetric(
@@ -467,9 +739,55 @@ class _HomePageState
                     child: _isGridView
                         ? _ProductCard(
                             product: product,
+                            onAddToCart: () {
+                              setState(
+                                () => _cartItemCount++,
+                              );
+                              ScaffoldMessenger.of(
+                                context,
+                              ).showSnackBar(
+                                SnackBar(
+                                  content: Text(
+                                    '${product['name']} added to cart',
+                                  ),
+                                  duration: const Duration(
+                                    seconds: 1,
+                                  ),
+                                  action: SnackBarAction(
+                                    label: 'View Cart',
+                                    onPressed: () => context.push(
+                                      AppRoutes.cart,
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
                           )
                         : _ProductListTile(
                             product: product,
+                            onAddToCart: () {
+                              setState(
+                                () => _cartItemCount++,
+                              );
+                              ScaffoldMessenger.of(
+                                context,
+                              ).showSnackBar(
+                                SnackBar(
+                                  content: Text(
+                                    '${product['name']} added to cart',
+                                  ),
+                                  duration: const Duration(
+                                    seconds: 1,
+                                  ),
+                                  action: SnackBarAction(
+                                    label: 'View Cart',
+                                    onPressed: () => context.push(
+                                      AppRoutes.cart,
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
                           ),
                   ),
                 ),
@@ -491,22 +809,31 @@ class _ProductCard
     dynamic
   >
   product;
+  final VoidCallback? onAddToCart;
 
   const _ProductCard({
     required this.product,
+    this.onAddToCart,
   });
 
   @override
   Widget build(
     BuildContext context,
   ) {
+    final isDark =
+        Theme.of(
+          context,
+        ).brightness ==
+        Brightness.dark;
     return GestureDetector(
       onTap: () => context.push(
         '/product/${product['id']}',
       ),
       child: Container(
         decoration: BoxDecoration(
-          color: AppColors.surfaceLight,
+          color: isDark
+              ? AppColors.surfaceDark
+              : AppColors.surfaceLight,
           borderRadius: BorderRadius.circular(
             16,
           ),
@@ -515,26 +842,44 @@ class _ProductCard
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Image placeholder
+            // Image
             Container(
               height: 100,
               decoration: BoxDecoration(
-                color: AppColors.primarySurface,
+                color: isDark
+                    ? AppColors.primarySurface.withOpacity(
+                        0.3,
+                      )
+                    : AppColors.primarySurface,
                 borderRadius: const BorderRadius.vertical(
                   top: Radius.circular(
                     16,
                   ),
                 ),
+                image:
+                    product['image'] !=
+                        null
+                    ? DecorationImage(
+                        image: NetworkImage(
+                          product['image'],
+                        ),
+                        fit: BoxFit.cover,
+                      )
+                    : null,
               ),
-              child: Center(
-                child: Icon(
-                  Icons.image,
-                  size: 40,
-                  color: AppColors.primary.withOpacity(
-                    0.5,
-                  ),
-                ),
-              ),
+              child:
+                  product['image'] ==
+                      null
+                  ? Center(
+                      child: Icon(
+                        Icons.image,
+                        size: 40,
+                        color: AppColors.primary.withOpacity(
+                          0.5,
+                        ),
+                      ),
+                    )
+                  : null,
             ),
             Expanded(
               child: Padding(
@@ -546,7 +891,11 @@ class _ProductCard
                   children: [
                     Text(
                       product['name'],
-                      style: AppTextStyles.titleSmall(),
+                      style: AppTextStyles.titleSmall(
+                        color: isDark
+                            ? AppColors.textPrimaryDark
+                            : null,
+                      ),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -574,7 +923,7 @@ class _ProductCard
                           ),
                         ),
                         const Spacer(),
-                        Icon(
+                        const Icon(
                           Icons.star,
                           size: 14,
                           color: AppColors.warning,
@@ -584,7 +933,11 @@ class _ProductCard
                         ),
                         Text(
                           product['rating'],
-                          style: AppTextStyles.labelSmall(),
+                          style: AppTextStyles.labelSmall(
+                            color: isDark
+                                ? AppColors.textSecondaryDark
+                                : null,
+                          ),
                         ),
                       ],
                     ),
@@ -596,19 +949,22 @@ class _ProductCard
                           '\$${product['price']}',
                           style: AppTextStyles.price(),
                         ),
-                        Container(
-                          width: 32,
-                          height: 32,
-                          decoration: BoxDecoration(
-                            color: AppColors.primary,
-                            borderRadius: BorderRadius.circular(
-                              8,
+                        GestureDetector(
+                          onTap: onAddToCart,
+                          child: Container(
+                            width: 32,
+                            height: 32,
+                            decoration: BoxDecoration(
+                              color: AppColors.primary,
+                              borderRadius: BorderRadius.circular(
+                                8,
+                              ),
                             ),
-                          ),
-                          child: const Icon(
-                            Icons.add,
-                            color: Colors.white,
-                            size: 18,
+                            child: const Icon(
+                              Icons.add,
+                              color: Colors.white,
+                              size: 18,
+                            ),
                           ),
                         ),
                       ],
@@ -632,15 +988,22 @@ class _ProductListTile
     dynamic
   >
   product;
+  final VoidCallback? onAddToCart;
 
   const _ProductListTile({
     required this.product,
+    this.onAddToCart,
   });
 
   @override
   Widget build(
     BuildContext context,
   ) {
+    final isDark =
+        Theme.of(
+          context,
+        ).brightness ==
+        Brightness.dark;
     return GestureDetector(
       onTap: () => context.push(
         '/product/${product['id']}',
@@ -650,7 +1013,9 @@ class _ProductListTile
           12,
         ),
         decoration: BoxDecoration(
-          color: AppColors.surfaceLight,
+          color: isDark
+              ? AppColors.surfaceDark
+              : AppColors.surfaceLight,
           borderRadius: BorderRadius.circular(
             12,
           ),
@@ -662,17 +1027,35 @@ class _ProductListTile
               width: 60,
               height: 60,
               decoration: BoxDecoration(
-                color: AppColors.primarySurface,
+                color: isDark
+                    ? AppColors.primarySurface.withOpacity(
+                        0.3,
+                      )
+                    : AppColors.primarySurface,
                 borderRadius: BorderRadius.circular(
                   8,
                 ),
+                image:
+                    product['image'] !=
+                        null
+                    ? DecorationImage(
+                        image: NetworkImage(
+                          product['image'],
+                        ),
+                        fit: BoxFit.cover,
+                      )
+                    : null,
               ),
-              child: Icon(
-                Icons.image,
-                color: AppColors.primary.withOpacity(
-                  0.5,
-                ),
-              ),
+              child:
+                  product['image'] ==
+                      null
+                  ? Icon(
+                      Icons.image,
+                      color: AppColors.primary.withOpacity(
+                        0.5,
+                      ),
+                    )
+                  : null,
             ),
             const SizedBox(
               width: 12,
@@ -684,14 +1067,22 @@ class _ProductListTile
                 children: [
                   Text(
                     product['name'],
-                    style: AppTextStyles.titleSmall(),
+                    style: AppTextStyles.titleSmall(
+                      color: isDark
+                          ? AppColors.textPrimaryDark
+                          : null,
+                    ),
                   ),
                   const SizedBox(
                     height: 4,
                   ),
                   Text(
                     '${product['store']} • ${product['distance']}',
-                    style: AppTextStyles.bodySmall(),
+                    style: AppTextStyles.bodySmall(
+                      color: isDark
+                          ? AppColors.textSecondaryDark
+                          : null,
+                    ),
                   ),
                 ],
               ),
@@ -706,18 +1097,43 @@ class _ProductListTile
                 ),
                 Row(
                   children: [
-                    Icon(
+                    const Icon(
                       Icons.star,
                       size: 14,
                       color: AppColors.warning,
                     ),
                     Text(
                       ' ${product['rating']}',
-                      style: AppTextStyles.labelSmall(),
+                      style: AppTextStyles.labelSmall(
+                        color: isDark
+                            ? AppColors.textSecondaryDark
+                            : null,
+                      ),
                     ),
                   ],
                 ),
               ],
+            ),
+            const SizedBox(
+              width: 8,
+            ),
+            GestureDetector(
+              onTap: onAddToCart,
+              child: Container(
+                width: 32,
+                height: 32,
+                decoration: BoxDecoration(
+                  color: AppColors.primary,
+                  borderRadius: BorderRadius.circular(
+                    8,
+                  ),
+                ),
+                child: const Icon(
+                  Icons.add,
+                  color: Colors.white,
+                  size: 18,
+                ),
+              ),
             ),
           ],
         ),

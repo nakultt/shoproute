@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../config/theme/app_colors.dart';
 import '../../../../config/theme/app_text_styles.dart';
 import '../../../../config/constants/app_constants.dart';
+import '../../../../config/theme/theme_notifier.dart';
 
 /// Settings Page
 class SettingsPage
@@ -23,22 +25,106 @@ class _SettingsPageState
         State<
           SettingsPage
         > {
-  String _theme = 'system';
   String _language = 'en';
   bool _pushNotifications = true;
   bool _emailNotifications = true;
   double _distanceLimit = 10;
 
   @override
+  void initState() {
+    super.initState();
+    _loadSettings();
+  }
+
+  Future<
+    void
+  >
+  _loadSettings() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(
+      () {
+        _language =
+            prefs.getString(
+              'language',
+            ) ??
+            'en';
+        _pushNotifications =
+            prefs.getBool(
+              'pushNotifications',
+            ) ??
+            true;
+        _emailNotifications =
+            prefs.getBool(
+              'emailNotifications',
+            ) ??
+            true;
+        _distanceLimit =
+            prefs.getDouble(
+              'distanceLimit',
+            ) ??
+            10;
+      },
+    );
+  }
+
+  Future<
+    void
+  >
+  _saveSettings() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(
+      'language',
+      _language,
+    );
+    await prefs.setBool(
+      'pushNotifications',
+      _pushNotifications,
+    );
+    await prefs.setBool(
+      'emailNotifications',
+      _emailNotifications,
+    );
+    await prefs.setDouble(
+      'distanceLimit',
+      _distanceLimit,
+    );
+  }
+
+  String get _currentThemeName {
+    switch (themeNotifier.themeMode) {
+      case ThemeMode.light:
+        return 'Light';
+      case ThemeMode.dark:
+        return 'Dark';
+      case ThemeMode.system:
+        return 'System';
+    }
+  }
+
+  @override
   Widget build(
     BuildContext context,
   ) {
+    final isDark =
+        Theme.of(
+          context,
+        ).brightness ==
+        Brightness.dark;
     return Scaffold(
-      backgroundColor: AppColors.backgroundLight,
+      backgroundColor: isDark
+          ? AppColors.backgroundDark
+          : AppColors.backgroundLight,
       appBar: AppBar(
+        backgroundColor: isDark
+            ? AppColors.surfaceDark
+            : AppColors.surfaceLight,
         title: Text(
           'Settings',
-          style: AppTextStyles.titleLarge(),
+          style: AppTextStyles.titleLarge(
+            color: isDark
+                ? AppColors.textPrimaryDark
+                : null,
+          ),
         ),
       ),
       body: ListView(
@@ -48,18 +134,13 @@ class _SettingsPageState
         children: [
           _buildSectionHeader(
             'Appearance',
+            isDark,
           ),
           _buildSettingCard(
+            isDark: isDark,
             icon: Icons.palette_outlined,
             title: 'Theme',
-            subtitle:
-                _theme ==
-                    'light'
-                ? 'Light'
-                : _theme ==
-                      'dark'
-                ? 'Dark'
-                : 'System',
+            subtitle: _currentThemeName,
             onTap: () => _showThemeDialog(),
           ),
           const SizedBox(
@@ -67,8 +148,10 @@ class _SettingsPageState
           ),
           _buildSectionHeader(
             'Language',
+            isDark,
           ),
           _buildSettingCard(
+            isDark: isDark,
             icon: Icons.language,
             title: 'Language',
             subtitle: AppConstants.supportedLanguages.firstWhere(
@@ -85,8 +168,10 @@ class _SettingsPageState
           ),
           _buildSectionHeader(
             'Preferences',
+            isDark,
           ),
           _buildSettingCard(
+            isDark: isDark,
             icon: Icons.location_on_outlined,
             title: 'Search Distance',
             subtitle: '${_distanceLimit.toInt()} km',
@@ -100,9 +185,12 @@ class _SettingsPageState
                 onChanged:
                     (
                       value,
-                    ) => setState(
-                      () => _distanceLimit = value,
-                    ),
+                    ) {
+                      setState(
+                        () => _distanceLimit = value,
+                      );
+                      _saveSettings();
+                    },
               ),
             ),
           ),
@@ -111,8 +199,10 @@ class _SettingsPageState
           ),
           _buildSectionHeader(
             'Notifications',
+            isDark,
           ),
           _buildSettingCard(
+            isDark: isDark,
             icon: Icons.notifications_outlined,
             title: 'Push Notifications',
             trailing: Switch(
@@ -120,12 +210,16 @@ class _SettingsPageState
               onChanged:
                   (
                     v,
-                  ) => setState(
-                    () => _pushNotifications = v,
-                  ),
+                  ) {
+                    setState(
+                      () => _pushNotifications = v,
+                    );
+                    _saveSettings();
+                  },
             ),
           ),
           _buildSettingCard(
+            isDark: isDark,
             icon: Icons.email_outlined,
             title: 'Email Notifications',
             trailing: Switch(
@@ -133,9 +227,12 @@ class _SettingsPageState
               onChanged:
                   (
                     v,
-                  ) => setState(
-                    () => _emailNotifications = v,
-                  ),
+                  ) {
+                    setState(
+                      () => _emailNotifications = v,
+                    );
+                    _saveSettings();
+                  },
             ),
           ),
           const SizedBox(
@@ -143,34 +240,61 @@ class _SettingsPageState
           ),
           _buildSectionHeader(
             'Privacy',
+            isDark,
           ),
           _buildSettingCard(
+            isDark: isDark,
             icon: Icons.history,
             title: 'Clear Search History',
-            onTap: () {},
+            onTap: () {
+              ScaffoldMessenger.of(
+                context,
+              ).showSnackBar(
+                const SnackBar(
+                  content: Text(
+                    'Search history cleared',
+                  ),
+                ),
+              );
+            },
           ),
           _buildSettingCard(
+            isDark: isDark,
             icon: Icons.cleaning_services_outlined,
             title: 'Clear Cache',
-            onTap: () {},
+            onTap: () {
+              ScaffoldMessenger.of(
+                context,
+              ).showSnackBar(
+                const SnackBar(
+                  content: Text(
+                    'Cache cleared',
+                  ),
+                ),
+              );
+            },
           ),
           const SizedBox(
             height: 24,
           ),
           _buildSectionHeader(
             'About',
+            isDark,
           ),
           _buildSettingCard(
+            isDark: isDark,
             icon: Icons.info_outline,
             title: 'App Version',
             subtitle: AppConstants.appVersion,
           ),
           _buildSettingCard(
+            isDark: isDark,
             icon: Icons.star_outline,
             title: 'Rate App',
             onTap: () {},
           ),
           _buildSettingCard(
+            isDark: isDark,
             icon: Icons.feedback_outlined,
             title: 'Send Feedback',
             onTap: () {},
@@ -179,6 +303,7 @@ class _SettingsPageState
             height: 24,
           ),
           _buildSettingCard(
+            isDark: isDark,
             icon: Icons.delete_forever,
             title: 'Delete Account',
             iconColor: AppColors.error,
@@ -195,6 +320,7 @@ class _SettingsPageState
 
   Widget _buildSectionHeader(
     String title,
+    bool isDark,
   ) {
     return Padding(
       padding: const EdgeInsets.only(
@@ -203,13 +329,16 @@ class _SettingsPageState
       child: Text(
         title,
         style: AppTextStyles.labelLarge(
-          color: AppColors.textSecondaryLight,
+          color: isDark
+              ? AppColors.textSecondaryDark
+              : AppColors.textSecondaryLight,
         ),
       ),
     );
   }
 
   Widget _buildSettingCard({
+    required bool isDark,
     required IconData icon,
     required String title,
     String? subtitle,
@@ -219,6 +348,9 @@ class _SettingsPageState
     Color? titleColor,
   }) {
     return Card(
+      color: isDark
+          ? AppColors.surfaceDark
+          : AppColors.surfaceLight,
       margin: const EdgeInsets.only(
         bottom: 8,
       ),
@@ -232,7 +364,11 @@ class _SettingsPageState
         title: Text(
           title,
           style: AppTextStyles.bodyLarge(
-            color: titleColor,
+            color:
+                titleColor ??
+                (isDark
+                    ? AppColors.textPrimaryDark
+                    : null),
           ),
         ),
         subtitle:
@@ -240,7 +376,11 @@ class _SettingsPageState
                 null
             ? Text(
                 subtitle,
-                style: AppTextStyles.bodySmall(),
+                style: AppTextStyles.bodySmall(
+                  color: isDark
+                      ? AppColors.textSecondaryDark
+                      : null,
+                ),
               )
             : null,
         trailing:
@@ -270,10 +410,10 @@ class _SettingsPageState
               mainAxisSize: MainAxisSize.min,
               children: [
                 RadioListTile<
-                  String
+                  ThemeMode
                 >(
-                  value: 'light',
-                  groupValue: _theme,
+                  value: ThemeMode.light,
+                  groupValue: themeNotifier.themeMode,
                   title: const Text(
                     'Light',
                   ),
@@ -281,10 +421,12 @@ class _SettingsPageState
                       (
                         v,
                       ) {
+                        themeNotifier.setThemeMode(
+                          v ??
+                              ThemeMode.light,
+                        );
                         setState(
-                          () => _theme =
-                              v ??
-                              'light',
+                          () {},
                         );
                         Navigator.pop(
                           ctx,
@@ -292,10 +434,10 @@ class _SettingsPageState
                       },
                 ),
                 RadioListTile<
-                  String
+                  ThemeMode
                 >(
-                  value: 'dark',
-                  groupValue: _theme,
+                  value: ThemeMode.dark,
+                  groupValue: themeNotifier.themeMode,
                   title: const Text(
                     'Dark',
                   ),
@@ -303,10 +445,12 @@ class _SettingsPageState
                       (
                         v,
                       ) {
+                        themeNotifier.setThemeMode(
+                          v ??
+                              ThemeMode.dark,
+                        );
                         setState(
-                          () => _theme =
-                              v ??
-                              'dark',
+                          () {},
                         );
                         Navigator.pop(
                           ctx,
@@ -314,10 +458,10 @@ class _SettingsPageState
                       },
                 ),
                 RadioListTile<
-                  String
+                  ThemeMode
                 >(
-                  value: 'system',
-                  groupValue: _theme,
+                  value: ThemeMode.system,
+                  groupValue: themeNotifier.themeMode,
                   title: const Text(
                     'System',
                   ),
@@ -325,10 +469,12 @@ class _SettingsPageState
                       (
                         v,
                       ) {
+                        themeNotifier.setThemeMode(
+                          v ??
+                              ThemeMode.system,
+                        );
                         setState(
-                          () => _theme =
-                              v ??
-                              'system',
+                          () {},
                         );
                         Navigator.pop(
                           ctx,
@@ -374,6 +520,7 @@ class _SettingsPageState
                                 v ??
                                 'en',
                           );
+                          _saveSettings();
                           Navigator.pop(
                             ctx,
                           );

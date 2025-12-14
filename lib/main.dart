@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'config/theme/app_theme.dart';
+import 'config/theme/theme_notifier.dart';
 import 'config/routes/app_router.dart';
 
 void
@@ -33,10 +34,44 @@ main() async {
 /// ShopRoute - Smart Shopping Route Optimizer App
 class ShopRouteApp
     extends
-        StatelessWidget {
+        StatefulWidget {
   const ShopRouteApp({
     super.key,
   });
+
+  @override
+  State<
+    ShopRouteApp
+  >
+  createState() => _ShopRouteAppState();
+}
+
+class _ShopRouteAppState
+    extends
+        State<
+          ShopRouteApp
+        > {
+  @override
+  void initState() {
+    super.initState();
+    themeNotifier.addListener(
+      _onThemeChange,
+    );
+  }
+
+  @override
+  void dispose() {
+    themeNotifier.removeListener(
+      _onThemeChange,
+    );
+    super.dispose();
+  }
+
+  void _onThemeChange() {
+    setState(
+      () {},
+    );
+  }
 
   @override
   Widget build(
@@ -49,7 +84,7 @@ class ShopRouteApp
       // Theme configuration
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
-      themeMode: ThemeMode.system,
+      themeMode: themeNotifier.themeMode,
 
       // Router configuration
       routerConfig: AppRouter.router,

@@ -14,6 +14,9 @@ import '../../features/saved/presentation/pages/saved_page.dart';
 import '../../features/map/presentation/pages/map_page.dart';
 import '../../features/settings/presentation/pages/settings_page.dart';
 import '../../features/profile/presentation/pages/profile_page.dart';
+import '../../features/cart/presentation/pages/cart_page.dart';
+import '../../features/search/presentation/pages/search_page.dart';
+import '../../features/pantry/presentation/pages/pantry_page.dart';
 import '../../core/widgets/main_scaffold.dart';
 
 /// Route names for navigation
@@ -31,6 +34,7 @@ class AppRoutes {
   static const String saved = '/saved';
   static const String map = '/map';
   static const String settings = '/settings';
+  static const String pantry = '/pantry';
 
   static const String profile = '/profile';
   static const String productDetail = '/product/:id';
@@ -216,6 +220,37 @@ class AppRouter {
               context,
               state,
             ) => const ProfilePage(),
+      ),
+      GoRoute(
+        path: AppRoutes.cart,
+        builder:
+            (
+              context,
+              state,
+            ) => const CartPage(),
+      ),
+      GoRoute(
+        path: AppRoutes.search,
+        builder:
+            (
+              context,
+              state,
+            ) {
+              final query =
+                  state.extra
+                      as String?;
+              return SearchPage(
+                initialQuery: query,
+              );
+            },
+      ),
+      GoRoute(
+        path: AppRoutes.pantry,
+        builder:
+            (
+              context,
+              state,
+            ) => const PantryPage(),
       ),
     ],
     errorBuilder:

@@ -15,6 +15,9 @@ import cartRoutes from "./routes/cart";
 import userRoutes from "./routes/user";
 import aiRoutes from "./routes/ai";
 import categoriesRoutes from "./routes/categories";
+import pantryRoutes from "./routes/pantry";
+import substitutionsRoutes from "./routes/substitutions";
+import ratingsRoutes from "./routes/ratings";
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -62,6 +65,9 @@ app.use("/api/cart", cartRoutes);
 app.use("/api/user", userRoutes);
 app.use("/api/ai", aiRoutes);
 app.use("/api/categories", categoriesRoutes);
+app.use("/api/pantry", pantryRoutes);
+app.use("/api/substitutions", substitutionsRoutes);
+app.use("/api/ratings", ratingsRoutes);
 
 // Error handling
 app.use(notFoundHandler);

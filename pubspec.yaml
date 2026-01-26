@@ -77,9 +77,16 @@ dev_dependencies:
   flutter_lints: ^5.0.0
   build_runner: ^2.4.7
   hive_generator: ^2.0.1
+  flutter_launcher_icons: ^0.13.1
 
 flutter:
   uses-material-design: true
 
   # Note: Fonts are loaded via google_fonts package from the network
   # No local font files needed
+
+flutter_launcher_icons:
+  android: "ic_launcher"
+  ios: true
+  image_path: "assets/icon.png"
+  min_sdk_android: 21

@@ -15,12 +15,8 @@ class ApiClient {
     _dio = Dio(
       BaseOptions(
         baseUrl: ApiEndpoints.apiBase,
-        connectTimeout: const Duration(
-          seconds: 30,
-        ),
-        receiveTimeout: const Duration(
-          seconds: 30,
-        ),
+        connectTimeout: const Duration(seconds: 30),
+        receiveTimeout: const Duration(seconds: 30),
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
@@ -28,49 +24,33 @@ class ApiClient {
       ),
     );
 
-    _dio.interceptors.addAll(
-      [
-        // Auth Interceptor
-        InterceptorsWrapper(
-          onRequest:
-              (
-                options,
-                handler,
-              ) async {
-                final token = await getToken();
-                if (token !=
-                    null) {
-                  options.headers['Authorization'] = 'Bearer $token';
-                }
-                handler.next(
-                  options,
-                );
-              },
-          onError:
-              (
-                error,
-                handler,
-              ) async {
-                if (error.response?.statusCode ==
-                    401) {
-                  await clearToken();
-                }
-                handler.next(
-                  error,
-                );
-              },
-        ),
-        // Logger (only in debug mode)
-        PrettyDioLogger(
-          requestHeader: true,
-          requestBody: true,
-          responseBody: true,
-          responseHeader: false,
-          error: true,
-          compact: true,
-        ),
-      ],
-    );
+    _dio.interceptors.addAll([
+      // Auth Interceptor
+      InterceptorsWrapper(
+        onRequest: (options, handler) async {
+          final token = await getToken();
+          if (token != null) {
+            options.headers['Authorization'] = 'Bearer $token';
+          }
+          handler.next(options);
+        },
+        onError: (error, handler) async {
+          if (error.response?.statusCode == 401) {
+            await clearToken();
+          }
+          handler.next(error);
+        },
+      ),
+      // Logger (only in debug mode)
+      PrettyDioLogger(
+        requestHeader: true,
+        requestBody: true,
+        responseBody: true,
+        responseHeader: false,
+        error: true,
+        compact: true,
+      ),
+    ]);
   }
 
   static ApiClient get instance {
@@ -81,92 +61,43 @@ class ApiClient {
   Dio get dio => _dio;
 
   // Token management
-  static Future<
-    void
-  >
-  saveToken(
-    String token,
-  ) async {
-    await _storage.write(
-      key: AppConstants.tokenKey,
-      value: token,
-    );
+  static Future<void> saveToken(String token) async {
+    await _storage.write(key: AppConstants.tokenKey, value: token);
   }
 
-  static Future<
-    String?
-  >
-  getToken() async {
-    return await _storage.read(
-      key: AppConstants.tokenKey,
-    );
+  static Future<String?> getToken() async {
+    return await _storage.read(key: AppConstants.tokenKey);
   }
 
-  static Future<
-    void
-  >
-  clearToken() async {
-    await _storage.delete(
-      key: AppConstants.tokenKey,
-    );
+  static Future<void> clearToken() async {
+    await _storage.delete(key: AppConstants.tokenKey);
   }
 
-  static Future<
-    bool
-  >
-  hasToken() async {
+  static Future<bool> hasToken() async {
     final token = await getToken();
-    return token !=
-            null &&
-        token.isNotEmpty;
+    return token != null && token.isNotEmpty;
   }
 
   // HTTP Methods
-  Future<
-    Response<
-      T
-    >
-  >
-  get<
-    T
-  >(
+  Future<Response<T>> get<T>(
     String path, {
-    Map<
-      String,
-      dynamic
-    >?
-    queryParameters,
+    Map<String, dynamic>? queryParameters,
     Options? options,
   }) async {
-    return _dio.get<
-      T
-    >(
+    return _dio.get<T>(
       path,
       queryParameters: queryParameters,
       options: options,
     );
   }
 
-  Future<
-    Response<
-      T
-    >
-  >
-  post<
-    T
-  >(
+  Future<Response<T>> post<T>(
     String path, {
     dynamic data,
-    Map<
-      String,
-      dynamic
-    >?
-    queryParameters,
+    Map<String, dynamic>? queryParameters,
     Options? options,
   }) async {
-    return _dio.post<
-      T
-    >(
+    return _dio.post<T>(
       path,
       data: data,
       queryParameters: queryParameters,
@@ -174,26 +105,13 @@ class ApiClient {
     );
   }
 
-  Future<
-    Response<
-      T
-    >
-  >
-  put<
-    T
-  >(
+  Future<Response<T>> put<T>(
     String path, {
     dynamic data,
-    Map<
-      String,
-      dynamic
-    >?
-    queryParameters,
+    Map<String, dynamic>? queryParameters,
     Options? options,
   }) async {
-    return _dio.put<
-      T
-    >(
+    return _dio.put<T>(
       path,
       data: data,
       queryParameters: queryParameters,
@@ -201,26 +119,13 @@ class ApiClient {
     );
   }
 
-  Future<
-    Response<
-      T
-    >
-  >
-  delete<
-    T
-  >(
+  Future<Response<T>> delete<T>(
     String path, {
     dynamic data,
-    Map<
-      String,
-      dynamic
-    >?
-    queryParameters,
+    Map<String, dynamic>? queryParameters,
     Options? options,
   }) async {
-    return _dio.delete<
-      T
-    >(
+    return _dio.delete<T>(
       path,
       data: data,
       queryParameters: queryParameters,

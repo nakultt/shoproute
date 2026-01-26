@@ -4,17 +4,14 @@ import 'config/theme/app_theme.dart';
 import 'config/theme/theme_notifier.dart';
 import 'config/routes/app_router.dart';
 
-void
-main() async {
-  WidgetsFlutterBinding.ensureInitialized(); 
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
 
   // Set preferred orientations
-  await SystemChrome.setPreferredOrientations(
-    [
-      DeviceOrientation.portraitUp,
-      DeviceOrientation.portraitDown,
-    ],
-  );
+  await SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+  ]);
 
   // Set system UI overlay style
   SystemChrome.setSystemUIOverlayStyle(
@@ -26,57 +23,36 @@ main() async {
     ),
   );
 
-  runApp(
-    const ShopRouteApp(),
-  );
+  runApp(const ShopRouteApp());
 }
 
 /// ShopRoute - Smart Shopping Route Optimizer App
-class ShopRouteApp
-    extends
-        StatefulWidget {
-  const ShopRouteApp({
-    super.key,
-  });
+class ShopRouteApp extends StatefulWidget {
+  const ShopRouteApp({super.key});
 
   @override
-  State<
-    ShopRouteApp
-  >
-  createState() => _ShopRouteAppState();
+  State<ShopRouteApp> createState() => _ShopRouteAppState();
 }
 
-class _ShopRouteAppState
-    extends
-        State<
-          ShopRouteApp
-        > {
+class _ShopRouteAppState extends State<ShopRouteApp> {
   @override
   void initState() {
     super.initState();
-    themeNotifier.addListener(
-      _onThemeChange,
-    );
+    themeNotifier.addListener(_onThemeChange);
   }
 
   @override
   void dispose() {
-    themeNotifier.removeListener(
-      _onThemeChange,
-    );
+    themeNotifier.removeListener(_onThemeChange);
     super.dispose();
   }
 
   void _onThemeChange() {
-    setState(
-      () {},
-    );
+    setState(() {});
   }
 
   @override
-  Widget build(
-    BuildContext context,
-  ) {
+  Widget build(BuildContext context) {
     return MaterialApp.router(
       title: 'ShopRoute',
       debugShowCheckedModeBanner: false,
@@ -90,33 +66,17 @@ class _ShopRouteAppState
       routerConfig: AppRouter.router,
 
       // Builder for global settings
-      builder:
-          (
-            context,
-            child,
-          ) {
-            return MediaQuery(
-              // Prevent text scaling beyond reasonable limits
-              data:
-                  MediaQuery.of(
-                    context,
-                  ).copyWith(
-                    textScaler: TextScaler.linear(
-                      MediaQuery.of(
-                            context,
-                          ).textScaler
-                          .scale(
-                            1.0,
-                          )
-                          .clamp(
-                            0.8,
-                            1.2,
-                          ),
-                    ),
-                  ),
-              child: child!,
-            );
-          },
+      builder: (context, child) {
+        return MediaQuery(
+          // Prevent text scaling beyond reasonable limits
+          data: MediaQuery.of(context).copyWith(
+            textScaler: TextScaler.linear(
+              MediaQuery.of(context).textScaler.scale(1.0).clamp(0.8, 1.2),
+            ),
+          ),
+          child: child!,
+        );
+      },
     );
   }
 }

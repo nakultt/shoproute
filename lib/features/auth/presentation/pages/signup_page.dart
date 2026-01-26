@@ -8,29 +8,15 @@ import '../../../../config/constants/app_constants.dart';
 import '../../../../core/widgets/animated_button.dart';
 
 /// Sign Up Page with form validation and password strength
-class SignupPage
-    extends
-        StatefulWidget {
-  const SignupPage({
-    super.key,
-  });
+class SignupPage extends StatefulWidget {
+  const SignupPage({super.key});
 
   @override
-  State<
-    SignupPage
-  >
-  createState() => _SignupPageState();
+  State<SignupPage> createState() => _SignupPageState();
 }
 
-class _SignupPageState
-    extends
-        State<
-          SignupPage
-        > {
-  final _formKey =
-      GlobalKey<
-        FormState
-      >();
+class _SignupPageState extends State<SignupPage> {
+  final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _emailController = TextEditingController();
   final _phoneController = TextEditingController();
@@ -46,9 +32,7 @@ class _SignupPageState
   @override
   void initState() {
     super.initState();
-    _passwordController.addListener(
-      _updatePasswordStrength,
-    );
+    _passwordController.addListener(_updatePasswordStrength);
   }
 
   @override
@@ -65,49 +49,25 @@ class _SignupPageState
     final password = _passwordController.text;
     int strength = 0;
 
-    if (password.length >=
-        8) {
+    if (password.length >= 8) {
       strength++;
     }
-    if (password.contains(
-          RegExp(
-            r'[A-Z]',
-          ),
-        ) &&
-        password.contains(
-          RegExp(
-            r'[a-z]',
-          ),
-        )) {
+    if (password.contains(RegExp(r'[A-Z]')) &&
+        password.contains(RegExp(r'[a-z]'))) {
       strength++;
     }
-    if (password.contains(
-          RegExp(
-            r'[0-9]',
-          ),
-        ) &&
-        password.contains(
-          RegExp(
-            r'[!@#$%^&*(),.?":{}|<>]',
-          ),
-        )) {
+    if (password.contains(RegExp(r'[0-9]')) &&
+        password.contains(RegExp(r'[!@#$%^&*(),.?":{}|<>]'))) {
       strength++;
     }
 
-    setState(
-      () => _passwordStrength = strength,
-    );
+    setState(() => _passwordStrength = strength);
   }
 
-  Future<
-    void
-  >
-  _handleSignup() async {
+  Future<void> _handleSignup() async {
     if (!_formKey.currentState!.validate()) return;
 
-    setState(
-      () => _isLoading = true,
-    );
+    setState(() => _isLoading = true);
 
     try {
       // Call signup API
@@ -119,16 +79,9 @@ class _SignupPageState
       );
 
       if (!mounted) return;
-      context.go(
-        AppRoutes.verifyEmail,
-        extra: _emailController.text,
-      );
-    } catch (
-      e
-    ) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(
+      context.go(AppRoutes.verifyEmail, extra: _emailController.text);
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
             'Signup failed: ${e.toString().replaceAll('Exception: ', '')}',
@@ -138,9 +91,7 @@ class _SignupPageState
       );
     } finally {
       if (mounted) {
-        setState(
-          () => _isLoading = false,
-        );
+        setState(() => _isLoading = false);
       }
     }
   }
@@ -172,18 +123,14 @@ class _SignupPageState
   }
 
   @override
-  Widget build(
-    BuildContext context,
-  ) {
+  Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.backgroundLight,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          onPressed: () => context.go(
-            AppRoutes.login,
-          ),
+          onPressed: () => context.go(AppRoutes.login),
           icon: const Icon(
             Icons.arrow_back_ios,
             color: AppColors.textPrimaryLight,
@@ -192,39 +139,25 @@ class _SignupPageState
       ),
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(
-            24,
-          ),
+          padding: const EdgeInsets.all(24),
           child: Form(
             key: _formKey,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  'Create Account',
-                  style: AppTextStyles.displaySmall(),
-                ),
-                const SizedBox(
-                  height: 8,
-                ),
+                Text('Create Account', style: AppTextStyles.displaySmall()),
+                const SizedBox(height: 8),
                 Text(
                   'Sign up to start shopping smarter',
                   style: AppTextStyles.bodyMedium(
                     color: AppColors.textSecondaryLight,
                   ),
                 ),
-                const SizedBox(
-                  height: 32,
-                ),
+                const SizedBox(height: 32),
 
                 // Full Name
-                Text(
-                  'Full Name',
-                  style: AppTextStyles.labelLarge(),
-                ),
-                const SizedBox(
-                  height: 8,
-                ),
+                Text('Full Name', style: AppTextStyles.labelLarge()),
+                const SizedBox(height: 8),
                 TextFormField(
                   controller: _nameController,
                   textCapitalization: TextCapitalization.words,
@@ -235,34 +168,21 @@ class _SignupPageState
                       color: AppColors.textTertiaryLight,
                     ),
                   ),
-                  validator:
-                      (
-                        value,
-                      ) {
-                        if (value ==
-                                null ||
-                            value.isEmpty) {
-                          return 'Please enter your name';
-                        }
-                        if (value.length <
-                            2) {
-                          return 'Name must be at least 2 characters';
-                        }
-                        return null;
-                      },
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter your name';
+                    }
+                    if (value.length < 2) {
+                      return 'Name must be at least 2 characters';
+                    }
+                    return null;
+                  },
                 ),
-                const SizedBox(
-                  height: 20,
-                ),
+                const SizedBox(height: 20),
 
                 // Email
-                Text(
-                  'Email',
-                  style: AppTextStyles.labelLarge(),
-                ),
-                const SizedBox(
-                  height: 8,
-                ),
+                Text('Email', style: AppTextStyles.labelLarge()),
+                const SizedBox(height: 8),
                 TextFormField(
                   controller: _emailController,
                   keyboardType: TextInputType.emailAddress,
@@ -273,37 +193,23 @@ class _SignupPageState
                       color: AppColors.textTertiaryLight,
                     ),
                   ),
-                  validator:
-                      (
-                        value,
-                      ) {
-                        if (value ==
-                                null ||
-                            value.isEmpty) {
-                          return 'Please enter your email';
-                        }
-                        if (!RegExp(
-                          r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
-                        ).hasMatch(
-                          value,
-                        )) {
-                          return 'Please enter a valid email';
-                        }
-                        return null;
-                      },
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter your email';
+                    }
+                    if (!RegExp(
+                      r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
+                    ).hasMatch(value)) {
+                      return 'Please enter a valid email';
+                    }
+                    return null;
+                  },
                 ),
-                const SizedBox(
-                  height: 20,
-                ),
+                const SizedBox(height: 20),
 
                 // Phone
-                Text(
-                  'Phone Number',
-                  style: AppTextStyles.labelLarge(),
-                ),
-                const SizedBox(
-                  height: 8,
-                ),
+                Text('Phone Number', style: AppTextStyles.labelLarge()),
+                const SizedBox(height: 8),
                 TextFormField(
                   controller: _phoneController,
                   keyboardType: TextInputType.phone,
@@ -315,34 +221,21 @@ class _SignupPageState
                     ),
                     prefixText: '+91 ',
                   ),
-                  validator:
-                      (
-                        value,
-                      ) {
-                        if (value ==
-                                null ||
-                            value.isEmpty) {
-                          return 'Please enter your phone number';
-                        }
-                        if (value.length <
-                            10) {
-                          return 'Please enter a valid phone number';
-                        }
-                        return null;
-                      },
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter your phone number';
+                    }
+                    if (value.length < 10) {
+                      return 'Please enter a valid phone number';
+                    }
+                    return null;
+                  },
                 ),
-                const SizedBox(
-                  height: 20,
-                ),
+                const SizedBox(height: 20),
 
                 // Password
-                Text(
-                  'Password',
-                  style: AppTextStyles.labelLarge(),
-                ),
-                const SizedBox(
-                  height: 8,
-                ),
+                Text('Password', style: AppTextStyles.labelLarge()),
+                const SizedBox(height: 8),
                 TextFormField(
                   controller: _passwordController,
                   obscureText: _obscurePassword,
@@ -353,9 +246,8 @@ class _SignupPageState
                       color: AppColors.textTertiaryLight,
                     ),
                     suffixIcon: IconButton(
-                      onPressed: () => setState(
-                        () => _obscurePassword = !_obscurePassword,
-                      ),
+                      onPressed: () =>
+                          setState(() => _obscurePassword = !_obscurePassword),
                       icon: Icon(
                         _obscurePassword
                             ? Icons.visibility_off_outlined
@@ -364,83 +256,57 @@ class _SignupPageState
                       ),
                     ),
                   ),
-                  validator:
-                      (
-                        value,
-                      ) {
-                        if (value ==
-                                null ||
-                            value.isEmpty) {
-                          return 'Please enter a password';
-                        }
-                        if (value.length <
-                            AppConstants.minPasswordLength) {
-                          return 'Password must be at least ${AppConstants.minPasswordLength} characters';
-                        }
-                        return null;
-                      },
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter a password';
+                    }
+                    if (value.length < AppConstants.minPasswordLength) {
+                      return 'Password must be at least ${AppConstants.minPasswordLength} characters';
+                    }
+                    return null;
+                  },
                 ),
                 // Password strength indicator
                 if (_passwordController.text.isNotEmpty) ...[
-                  const SizedBox(
-                    height: 12,
-                  ),
+                  const SizedBox(height: 12),
                   Row(
                     children: [
                       Expanded(
                         child: Container(
                           height: 4,
                           decoration: BoxDecoration(
-                            color:
-                                _passwordStrength >=
-                                    1
+                            color: _passwordStrength >= 1
                                 ? _getStrengthColor()
                                 : AppColors.borderLight,
-                            borderRadius: BorderRadius.circular(
-                              2,
-                            ),
+                            borderRadius: BorderRadius.circular(2),
                           ),
                         ),
                       ),
-                      const SizedBox(
-                        width: 4,
-                      ),
+                      const SizedBox(width: 4),
                       Expanded(
                         child: Container(
                           height: 4,
                           decoration: BoxDecoration(
-                            color:
-                                _passwordStrength >=
-                                    2
+                            color: _passwordStrength >= 2
                                 ? _getStrengthColor()
                                 : AppColors.borderLight,
-                            borderRadius: BorderRadius.circular(
-                              2,
-                            ),
+                            borderRadius: BorderRadius.circular(2),
                           ),
                         ),
                       ),
-                      const SizedBox(
-                        width: 4,
-                      ),
+                      const SizedBox(width: 4),
                       Expanded(
                         child: Container(
                           height: 4,
                           decoration: BoxDecoration(
-                            color:
-                                _passwordStrength >=
-                                    3
+                            color: _passwordStrength >= 3
                                 ? _getStrengthColor()
                                 : AppColors.borderLight,
-                            borderRadius: BorderRadius.circular(
-                              2,
-                            ),
+                            borderRadius: BorderRadius.circular(2),
                           ),
                         ),
                       ),
-                      const SizedBox(
-                        width: 12,
-                      ),
+                      const SizedBox(width: 12),
                       Text(
                         _getStrengthText(),
                         style: AppTextStyles.labelSmall(
@@ -450,18 +316,11 @@ class _SignupPageState
                     ],
                   ),
                 ],
-                const SizedBox(
-                  height: 20,
-                ),
+                const SizedBox(height: 20),
 
                 // Confirm Password
-                Text(
-                  'Confirm Password',
-                  style: AppTextStyles.labelLarge(),
-                ),
-                const SizedBox(
-                  height: 8,
-                ),
+                Text('Confirm Password', style: AppTextStyles.labelLarge()),
+                const SizedBox(height: 8),
                 TextFormField(
                   controller: _confirmPasswordController,
                   obscureText: _obscureConfirmPassword,
@@ -473,7 +332,8 @@ class _SignupPageState
                     ),
                     suffixIcon: IconButton(
                       onPressed: () => setState(
-                        () => _obscureConfirmPassword = !_obscureConfirmPassword,
+                        () =>
+                            _obscureConfirmPassword = !_obscureConfirmPassword,
                       ),
                       icon: Icon(
                         _obscureConfirmPassword
@@ -483,38 +343,26 @@ class _SignupPageState
                       ),
                     ),
                   ),
-                  validator:
-                      (
-                        value,
-                      ) {
-                        if (value ==
-                                null ||
-                            value.isEmpty) {
-                          return 'Please confirm your password';
-                        }
-                        if (value !=
-                            _passwordController.text) {
-                          return 'Passwords do not match';
-                        }
-                        return null;
-                      },
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please confirm your password';
+                    }
+                    if (value != _passwordController.text) {
+                      return 'Passwords do not match';
+                    }
+                    return null;
+                  },
                 ),
-                const SizedBox(
-                  height: 32,
-                ),
+                const SizedBox(height: 32),
 
                 // Sign up button
                 AnimatedButton(
                   onPressed: _handleSignup,
                   isLoading: _isLoading,
                   gradient: AppColors.primaryGradient,
-                  child: const Text(
-                    'Create Account',
-                  ),
+                  child: const Text('Create Account'),
                 ),
-                const SizedBox(
-                  height: 24,
-                ),
+                const SizedBox(height: 24),
 
                 // Login link
                 Row(
@@ -527,9 +375,7 @@ class _SignupPageState
                       ),
                     ),
                     GestureDetector(
-                      onTap: () => context.go(
-                        AppRoutes.login,
-                      ),
+                      onTap: () => context.go(AppRoutes.login),
                       child: Text(
                         'Log In',
                         style: AppTextStyles.labelLarge(
@@ -539,9 +385,7 @@ class _SignupPageState
                     ),
                   ],
                 ),
-                const SizedBox(
-                  height: 24,
-                ),
+                const SizedBox(height: 24),
               ],
             ),
           ),

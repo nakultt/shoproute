@@ -5,58 +5,28 @@ import '../../../../config/constants/api_endpoints.dart';
 class AuthService {
   final ApiClient _apiClient = ApiClient.instance;
 
-  Future<
-    Map<
-      String,
-      dynamic
-    >
-  >
-  login(
-    String email,
-    String password,
-  ) async {
+  Future<Map<String, dynamic>> login(String email, String password) async {
     try {
       final response = await _apiClient.post(
         ApiEndpoints.login,
-        data: {
-          'email_or_username': email,
-          'password': password,
-        },
+        data: {'email_or_username': email, 'password': password},
       );
 
-      if (response.data['success'] ==
-          true) {
+      if (response.data['success'] == true) {
         final token = response.data['data']['token'];
-        if (token !=
-            null) {
-          await ApiClient.saveToken(
-            token,
-          );
+        if (token != null) {
+          await ApiClient.saveToken(token);
         }
         return response.data['data']['user'];
       } else {
-        throw Exception(
-          response.data['error'] ??
-              'Login failed',
-        );
+        throw Exception(response.data['error'] ?? 'Login failed');
       }
-    } on DioException catch (
-      e
-    ) {
-      throw Exception(
-        e.response?.data['error'] ??
-            'Connection failed',
-      );
+    } on DioException catch (e) {
+      throw Exception(e.response?.data['error'] ?? 'Connection failed');
     }
   }
 
-  Future<
-    Map<
-      String,
-      dynamic
-    >
-  >
-  register({
+  Future<Map<String, dynamic>> register({
     required String fullName,
     required String email,
     required String phone,
@@ -73,126 +43,63 @@ class AuthService {
         },
       );
 
-      if (response.data['success'] ==
-          true) {
+      if (response.data['success'] == true) {
         return response.data['data'];
       } else {
-        throw Exception(
-          response.data['error'] ??
-              'Registration failed',
-        );
+        throw Exception(response.data['error'] ?? 'Registration failed');
       }
-    } on DioException catch (
-      e
-    ) {
-      throw Exception(
-        e.response?.data['error'] ??
-            'Connection failed',
-      );
+    } on DioException catch (e) {
+      throw Exception(e.response?.data['error'] ?? 'Connection failed');
     }
   }
 
-  Future<
-    Map<
-      String,
-      dynamic
-    >
-  >
-  getCurrentUser() async {
+  Future<Map<String, dynamic>> getCurrentUser() async {
     try {
-      final response = await _apiClient.get(
-        ApiEndpoints.me,
-      );
+      final response = await _apiClient.get(ApiEndpoints.me);
 
-      if (response.data['success'] ==
-          true) {
+      if (response.data['success'] == true) {
         return response.data['data'];
       } else {
-        throw Exception(
-          response.data['error'] ??
-              'Failed to get user profile',
-        );
+        throw Exception(response.data['error'] ?? 'Failed to get user profile');
       }
-    } on DioException catch (
-      e
-    ) {
-      throw Exception(
-        e.response?.data['error'] ??
-            'Connection failed',
-      );
+    } on DioException catch (e) {
+      throw Exception(e.response?.data['error'] ?? 'Connection failed');
     }
   }
 
-  Future<
-    bool
-  >
-  verifyEmail(
-    String email,
-    String otp,
-  ) async {
+  Future<bool> verifyEmail(String email, String otp) async {
     try {
       final response = await _apiClient.post(
         ApiEndpoints.verifyEmail,
-        data: {
-          'email': email,
-          'otp': otp,
-        },
+        data: {'email': email, 'otp': otp},
       );
 
-      return response.data['success'] ==
-          true;
-    } on DioException catch (
-      e
-    ) {
-      throw Exception(
-        e.response?.data['error'] ??
-            'Verification failed',
-      );
+      return response.data['success'] == true;
+    } on DioException catch (e) {
+      throw Exception(e.response?.data['error'] ?? 'Verification failed');
     }
   }
 
-  Future<
-    void
-  >
-  resendOtp(
-    String email,
-  ) async {
+  Future<void> resendOtp(String email) async {
     try {
       final response = await _apiClient.post(
         ApiEndpoints.resendOtp,
-        data: {
-          'email': email,
-        },
+        data: {'email': email},
       );
 
-      if (response.data['success'] !=
-          true) {
-        throw Exception(
-          response.data['error'] ??
-              'Failed to resend OTP',
-        );
+      if (response.data['success'] != true) {
+        throw Exception(response.data['error'] ?? 'Failed to resend OTP');
       }
-    } on DioException catch (
-      e
-    ) {
-      throw Exception(
-        e.response?.data['error'] ??
-            'Connection failed',
-      );
+    } on DioException catch (e) {
+      throw Exception(e.response?.data['error'] ?? 'Connection failed');
     }
   }
 
-  Future<
-    void
-  >
-  logout() async {
+  Future<void> logout() async {
     await ApiClient.clearToken();
   }
 
-  Future<
-    bool
-  >
-  isLoggedIn() async {
+  Future<bool> isLoggedIn() async {
     return await ApiClient.hasToken();
   }
 }

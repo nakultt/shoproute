@@ -7,25 +7,14 @@ import '../../../../config/theme/app_theme.dart';
 import '../../../../config/routes/app_router.dart';
 
 /// Profile Page
-class ProfilePage
-    extends
-        StatefulWidget {
-  const ProfilePage({
-    super.key,
-  });
+class ProfilePage extends StatefulWidget {
+  const ProfilePage({super.key});
 
   @override
-  State<
-    ProfilePage
-  >
-  createState() => _ProfilePageState();
+  State<ProfilePage> createState() => _ProfilePageState();
 }
 
-class _ProfilePageState
-    extends
-        State<
-          ProfilePage
-        > {
+class _ProfilePageState extends State<ProfilePage> {
   String _userName = 'Loading...';
   String _userEmail = '...';
   String? _avatarUrl;
@@ -37,261 +26,168 @@ class _ProfilePageState
     _loadUserProfile();
   }
 
-  Future<
-    void
-  >
-  _loadUserProfile() async {
+  Future<void> _loadUserProfile() async {
     try {
       final user = await _authService.getCurrentUser();
       if (mounted) {
-        setState(
-          () {
-            _userName =
-                user['full_name'] ??
-                'User';
-            _userEmail =
-                user['email'] ??
-                '';
-            _avatarUrl = user['profile_picture'];
-          },
-        );
+        setState(() {
+          _userName = user['full_name'] ?? 'User';
+          _userEmail = user['email'] ?? '';
+          _avatarUrl = user['profile_picture'];
+        });
       }
-    } catch (
-      e
-    ) {
+    } catch (e) {
       // Handle error gently, maybe user is offline or token expired
-      print(
-        'Error loading profile: $e',
-      );
+      print('Error loading profile: $e');
     }
   }
 
   void _showEditProfileDialog() {
-    final nameController = TextEditingController(
-      text: _userName,
-    );
-    final emailController = TextEditingController(
-      text: _userEmail,
-    );
+    final nameController = TextEditingController(text: _userName);
+    final emailController = TextEditingController(text: _userEmail);
 
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder:
-          (
-            ctx,
-          ) => Container(
-            padding: EdgeInsets.only(
-              bottom: MediaQuery.of(
-                ctx,
-              ).viewInsets.bottom,
-            ),
-            decoration: const BoxDecoration(
-              color: AppColors.surfaceLight,
-              borderRadius: BorderRadius.vertical(
-                top: Radius.circular(
-                  24,
-                ),
-              ),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.all(
-                24,
-              ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
+      builder: (ctx) => Container(
+        padding: EdgeInsets.only(bottom: MediaQuery.of(ctx).viewInsets.bottom),
+        decoration: const BoxDecoration(
+          color: AppColors.surfaceLight,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        'Edit Profile',
-                        style: AppTextStyles.headlineSmall(),
+                  Text('Edit Profile', style: AppTextStyles.headlineSmall()),
+                  IconButton(
+                    onPressed: () => Navigator.pop(ctx),
+                    icon: const Icon(Icons.close),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 24),
+              // Avatar editor
+              Center(
+                child: GestureDetector(
+                  onTap: () {
+                    // TODO: Implement image picker
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Image picker coming soon!'),
                       ),
-                      IconButton(
-                        onPressed: () => Navigator.pop(
-                          ctx,
+                    );
+                  },
+                  child: Stack(
+                    children: [
+                      Container(
+                        width: 100,
+                        height: 100,
+                        decoration: BoxDecoration(
+                          color: AppColors.primarySurface,
+                          shape: BoxShape.circle,
+                          image: _avatarUrl != null
+                              ? DecorationImage(
+                                  image: NetworkImage(_avatarUrl!),
+                                  fit: BoxFit.cover,
+                                )
+                              : null,
                         ),
-                        icon: const Icon(
-                          Icons.close,
+                        child: _avatarUrl == null
+                            ? const Icon(
+                                Icons.person,
+                                size: 50,
+                                color: AppColors.primary,
+                              )
+                            : null,
+                      ),
+                      Positioned(
+                        bottom: 0,
+                        right: 0,
+                        child: Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: const BoxDecoration(
+                            color: AppColors.primary,
+                            shape: BoxShape.circle,
+                          ),
+                          child: const Icon(
+                            Icons.camera_alt,
+                            size: 16,
+                            color: Colors.white,
+                          ),
                         ),
                       ),
                     ],
                   ),
-                  const SizedBox(
-                    height: 24,
-                  ),
-                  // Avatar editor
-                  Center(
-                    child: GestureDetector(
-                      onTap: () {
-                        // TODO: Implement image picker
-                        ScaffoldMessenger.of(
-                          context,
-                        ).showSnackBar(
-                          const SnackBar(
-                            content: Text(
-                              'Image picker coming soon!',
-                            ),
-                          ),
-                        );
-                      },
-                      child: Stack(
-                        children: [
-                          Container(
-                            width: 100,
-                            height: 100,
-                            decoration: BoxDecoration(
-                              color: AppColors.primarySurface,
-                              shape: BoxShape.circle,
-                              image:
-                                  _avatarUrl !=
-                                      null
-                                  ? DecorationImage(
-                                      image: NetworkImage(
-                                        _avatarUrl!,
-                                      ),
-                                      fit: BoxFit.cover,
-                                    )
-                                  : null,
-                            ),
-                            child:
-                                _avatarUrl ==
-                                    null
-                                ? const Icon(
-                                    Icons.person,
-                                    size: 50,
-                                    color: AppColors.primary,
-                                  )
-                                : null,
-                          ),
-                          Positioned(
-                            bottom: 0,
-                            right: 0,
-                            child: Container(
-                              padding: const EdgeInsets.all(
-                                8,
-                              ),
-                              decoration: const BoxDecoration(
-                                color: AppColors.primary,
-                                shape: BoxShape.circle,
-                              ),
-                              child: const Icon(
-                                Icons.camera_alt,
-                                size: 16,
-                                color: Colors.white,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 24,
-                  ),
-                  Text(
-                    'Full Name',
-                    style: AppTextStyles.labelLarge(),
-                  ),
-                  const SizedBox(
-                    height: 8,
-                  ),
-                  TextFormField(
-                    controller: nameController,
-                    decoration: const InputDecoration(
-                      hintText: 'Enter your name',
-                      prefixIcon: Icon(
-                        Icons.person_outline,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 16,
-                  ),
-                  Text(
-                    'Email',
-                    style: AppTextStyles.labelLarge(),
-                  ),
-                  const SizedBox(
-                    height: 8,
-                  ),
-                  TextFormField(
-                    controller: emailController,
-                    keyboardType: TextInputType.emailAddress,
-                    decoration: const InputDecoration(
-                      hintText: 'Enter your email',
-                      prefixIcon: Icon(
-                        Icons.email_outlined,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 24,
-                  ),
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        setState(
-                          () {
-                            _userName = nameController.text;
-                            _userEmail = emailController.text;
-                          },
-                        );
-                        Navigator.pop(
-                          ctx,
-                        );
-                        ScaffoldMessenger.of(
-                          context,
-                        ).showSnackBar(
-                          const SnackBar(
-                            content: Text(
-                              'Profile updated successfully!',
-                            ),
-                          ),
-                        );
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.primary,
-                        padding: const EdgeInsets.symmetric(
-                          vertical: 16,
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(
-                            12,
-                          ),
-                        ),
-                      ),
-                      child: const Text(
-                        'Save Changes',
-                        style: TextStyle(
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 16,
-                  ),
-                ],
+                ),
               ),
-            ),
+              const SizedBox(height: 24),
+              Text('Full Name', style: AppTextStyles.labelLarge()),
+              const SizedBox(height: 8),
+              TextFormField(
+                controller: nameController,
+                decoration: const InputDecoration(
+                  hintText: 'Enter your name',
+                  prefixIcon: Icon(Icons.person_outline),
+                ),
+              ),
+              const SizedBox(height: 16),
+              Text('Email', style: AppTextStyles.labelLarge()),
+              const SizedBox(height: 8),
+              TextFormField(
+                controller: emailController,
+                keyboardType: TextInputType.emailAddress,
+                decoration: const InputDecoration(
+                  hintText: 'Enter your email',
+                  prefixIcon: Icon(Icons.email_outlined),
+                ),
+              ),
+              const SizedBox(height: 24),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () {
+                    setState(() {
+                      _userName = nameController.text;
+                      _userEmail = emailController.text;
+                    });
+                    Navigator.pop(ctx);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Profile updated successfully!'),
+                      ),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.primary,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  child: const Text(
+                    'Save Changes',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+            ],
           ),
+        ),
+      ),
     );
   }
 
   @override
-  Widget build(
-    BuildContext context,
-  ) {
-    final isDark =
-        Theme.of(
-          context,
-        ).brightness ==
-        Brightness.dark;
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
       backgroundColor: isDark
           ? AppColors.backgroundDark
@@ -311,9 +207,7 @@ class _ProfilePageState
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const SizedBox(
-                        height: 20,
-                      ),
+                      const SizedBox(height: 20),
                       // Avatar
                       Container(
                         width: 80,
@@ -322,20 +216,14 @@ class _ProfilePageState
                           color: Colors.white,
                           shape: BoxShape.circle,
                           boxShadow: AppTheme.shadowMd,
-                          image:
-                              _avatarUrl !=
-                                  null
+                          image: _avatarUrl != null
                               ? DecorationImage(
-                                  image: NetworkImage(
-                                    _avatarUrl!,
-                                  ),
+                                  image: NetworkImage(_avatarUrl!),
                                   fit: BoxFit.cover,
                                 )
                               : null,
                         ),
-                        child:
-                            _avatarUrl ==
-                                null
+                        child: _avatarUrl == null
                             ? const Icon(
                                 Icons.person,
                                 size: 40,
@@ -343,9 +231,7 @@ class _ProfilePageState
                               )
                             : null,
                       ),
-                      const SizedBox(
-                        height: 12,
-                      ),
+                      const SizedBox(height: 12),
                       Text(
                         _userName,
                         style: AppTextStyles.headlineMedium(
@@ -354,9 +240,7 @@ class _ProfilePageState
                       ),
                       Text(
                         _userEmail,
-                        style: AppTextStyles.bodySmall(
-                          color: Colors.white70,
-                        ),
+                        style: AppTextStyles.bodySmall(color: Colors.white70),
                       ),
                     ],
                   ),
@@ -368,23 +252,15 @@ class _ProfilePageState
                 if (context.canPop()) {
                   context.pop();
                 } else {
-                  context.go(
-                    AppRoutes.home,
-                  );
+                  context.go(AppRoutes.home);
                 }
               },
-              icon: const Icon(
-                Icons.arrow_back,
-                color: Colors.white,
-              ),
+              icon: const Icon(Icons.arrow_back, color: Colors.white),
             ),
             actions: [
               IconButton(
                 onPressed: _showEditProfileDialog,
-                icon: const Icon(
-                  Icons.edit,
-                  color: Colors.white,
-                ),
+                icon: const Icon(Icons.edit, color: Colors.white),
               ),
             ],
           ),
@@ -392,9 +268,7 @@ class _ProfilePageState
           // Stats
           SliverToBoxAdapter(
             child: Padding(
-              padding: const EdgeInsets.all(
-                16,
-              ),
+              padding: const EdgeInsets.all(16),
               child: Row(
                 children: [
                   _StatCard(
@@ -402,25 +276,15 @@ class _ProfilePageState
                     value: '24',
                     label: 'Orders',
                   ),
-                  const SizedBox(
-                    width: 12,
-                  ),
+                  const SizedBox(width: 12),
                   _StatCard(
                     icon: Icons.savings,
                     value: '\$156',
                     label: 'Saved',
                   ),
-                  const SizedBox(
-                    width: 12,
-                  ),
-                  _StatCard(
-                    icon: Icons.store,
-                    value: '8',
-                    label: 'Favorites',
-                  ),
-                  const SizedBox(
-                    width: 12,
-                  ),
+                  const SizedBox(width: 12),
+                  _StatCard(icon: Icons.store, value: '8', label: 'Favorites'),
+                  const SizedBox(width: 12),
                   _StatCard(
                     icon: Icons.rate_review,
                     value: '12',
@@ -434,9 +298,7 @@ class _ProfilePageState
           // Menu items
           SliverToBoxAdapter(
             child: Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 16,
-              ),
+              padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Column(
                 children: [
                   _ProfileMenuItem(
@@ -465,9 +327,7 @@ class _ProfilePageState
                     title: 'Help & Support',
                     onTap: () {},
                   ),
-                  const SizedBox(
-                    height: 24,
-                  ),
+                  const SizedBox(height: 24),
                   _ProfileMenuItem(
                     icon: Icons.logout,
                     title: 'Logout',
@@ -476,46 +336,29 @@ class _ProfilePageState
                     onTap: () {
                       showDialog(
                         context: context,
-                        builder:
-                            (
-                              ctx,
-                            ) => AlertDialog(
-                              title: const Text(
-                                'Logout',
-                              ),
-                              content: const Text(
-                                'Are you sure you want to logout?',
-                              ),
-                              actions: [
-                                TextButton(
-                                  onPressed: () => Navigator.pop(
-                                    ctx,
-                                  ),
-                                  child: const Text(
-                                    'Cancel',
-                                  ),
-                                ),
-                                TextButton(
-                                  onPressed: () {
-                                    Navigator.pop(
-                                      ctx,
-                                    );
-                                    context.go(
-                                      AppRoutes.login,
-                                    );
-                                  },
-                                  child: const Text(
-                                    'Logout',
-                                  ),
-                                ),
-                              ],
+                        builder: (ctx) => AlertDialog(
+                          title: const Text('Logout'),
+                          content: const Text(
+                            'Are you sure you want to logout?',
+                          ),
+                          actions: [
+                            TextButton(
+                              onPressed: () => Navigator.pop(ctx),
+                              child: const Text('Cancel'),
                             ),
+                            TextButton(
+                              onPressed: () {
+                                Navigator.pop(ctx);
+                                context.go(AppRoutes.login);
+                              },
+                              child: const Text('Logout'),
+                            ),
+                          ],
+                        ),
                       );
                     },
                   ),
-                  const SizedBox(
-                    height: 40,
-                  ),
+                  const SizedBox(height: 40),
                 ],
               ),
             ),
@@ -526,9 +369,7 @@ class _ProfilePageState
   }
 }
 
-class _StatCard
-    extends
-        StatelessWidget {
+class _StatCard extends StatelessWidget {
   final IconData icon;
   final String value;
   final String label;
@@ -540,39 +381,21 @@ class _StatCard
   });
 
   @override
-  Widget build(
-    BuildContext context,
-  ) {
+  Widget build(BuildContext context) {
     return Expanded(
       child: Container(
-        padding: const EdgeInsets.all(
-          12,
-        ),
+        padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
           color: AppColors.surfaceLight,
-          borderRadius: BorderRadius.circular(
-            12,
-          ),
+          borderRadius: BorderRadius.circular(12),
           boxShadow: AppTheme.shadowSm,
         ),
         child: Column(
           children: [
-            Icon(
-              icon,
-              color: AppColors.primary,
-              size: 24,
-            ),
-            const SizedBox(
-              height: 8,
-            ),
-            Text(
-              value,
-              style: AppTextStyles.titleLarge(),
-            ),
-            Text(
-              label,
-              style: AppTextStyles.bodySmall(),
-            ),
+            Icon(icon, color: AppColors.primary, size: 24),
+            const SizedBox(height: 8),
+            Text(value, style: AppTextStyles.titleLarge()),
+            Text(label, style: AppTextStyles.bodySmall()),
           ],
         ),
       ),
@@ -580,9 +403,7 @@ class _StatCard
   }
 }
 
-class _ProfileMenuItem
-    extends
-        StatelessWidget {
+class _ProfileMenuItem extends StatelessWidget {
   final IconData icon;
   final String title;
   final String? badge;
@@ -600,54 +421,26 @@ class _ProfileMenuItem
   });
 
   @override
-  Widget build(
-    BuildContext context,
-  ) {
+  Widget build(BuildContext context) {
     return Card(
-      margin: const EdgeInsets.only(
-        bottom: 8,
-      ),
+      margin: const EdgeInsets.only(bottom: 8),
       child: ListTile(
-        leading: Icon(
-          icon,
-          color:
-              iconColor ??
-              AppColors.primary,
-        ),
-        title: Text(
-          title,
-          style: AppTextStyles.bodyLarge(
-            color: titleColor,
-          ),
-        ),
+        leading: Icon(icon, color: iconColor ?? AppColors.primary),
+        title: Text(title, style: AppTextStyles.bodyLarge(color: titleColor)),
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            if (badge !=
-                null)
+            if (badge != null)
               Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 8,
-                  vertical: 4,
-                ),
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
                   color: AppColors.error,
-                  borderRadius: BorderRadius.circular(
-                    12,
-                  ),
+                  borderRadius: BorderRadius.circular(12),
                 ),
-                child: Text(
-                  badge!,
-                  style: AppTextStyles.badge(),
-                ),
+                child: Text(badge!, style: AppTextStyles.badge()),
               ),
-            const SizedBox(
-              width: 8,
-            ),
-            const Icon(
-              Icons.chevron_right,
-              color: AppColors.textTertiaryLight,
-            ),
+            const SizedBox(width: 8),
+            const Icon(Icons.chevron_right, color: AppColors.textTertiaryLight),
           ],
         ),
         onTap: onTap,

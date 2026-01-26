@@ -39,68 +39,19 @@ class AppConstants {
 
   // Categories
   // Categories
-  static const List<
-    Map<
-      String,
-      dynamic
-    >
-  >
-  defaultCategories = [
-    {
-      'id': 0,
-      'name': 'All Products',
-      'icon': '🔥',
-      'color': 0xFFEF4444,
-    },
-    {
-      'id': 1,
-      'name': 'Fruits & Vegetables',
-      'icon': '🍎',
-      'color': 0xFF22C55E,
-    },
-    {
-      'id': 2,
-      'name': 'Dairy & Breakfast',
-      'icon': '🥛',
-      'color': 0xFF0EA5E9,
-    },
-    {
-      'id': 3,
-      'name': 'Rice & Grains',
-      'icon': '🌾',
-      'color': 0xFFEAB308,
-    },
-    {
-      'id': 4,
-      'name': 'Bakery & Snacks',
-      'icon': '🍞',
-      'color': 0xFFF97316,
-    },
-    {
-      'id': 5,
-      'name': 'Beverages',
-      'icon': '🥤',
-      'color': 0xFF8B5CF6,
-    },
-    {
-      'id': 6,
-      'name': 'Personal Care',
-      'icon': '🧴',
-      'color': 0xFFEC4899,
-    },
-    {
-      'id': 7,
-      'name': 'Household',
-      'icon': '🧹',
-      'color': 0xFF6B7280,
-    },
+  static const List<Map<String, dynamic>> defaultCategories = [
+    {'id': 0, 'name': 'All Products', 'icon': '🔥', 'color': 0xFFEF4444},
+    {'id': 1, 'name': 'Fruits & Vegetables', 'icon': '🍎', 'color': 0xFF22C55E},
+    {'id': 2, 'name': 'Dairy & Breakfast', 'icon': '🥛', 'color': 0xFF0EA5E9},
+    {'id': 3, 'name': 'Rice & Grains', 'icon': '🌾', 'color': 0xFFEAB308},
+    {'id': 4, 'name': 'Bakery & Snacks', 'icon': '🍞', 'color': 0xFFF97316},
+    {'id': 5, 'name': 'Beverages', 'icon': '🥤', 'color': 0xFF8B5CF6},
+    {'id': 6, 'name': 'Personal Care', 'icon': '🧴', 'color': 0xFFEC4899},
+    {'id': 7, 'name': 'Household', 'icon': '🧹', 'color': 0xFF6B7280},
   ];
 
   // Dietary Preferences
-  static const List<
-    String
-  >
-  dietaryPreferences = [
+  static const List<String> dietaryPreferences = [
     'Vegetarian',
     'Vegan',
     'Gluten-free',
@@ -114,44 +65,17 @@ class AppConstants {
   ];
 
   // Languages
-  static const List<
-    Map<
-      String,
-      String
-    >
-  >
-  supportedLanguages = [
-    {
-      'code': 'en',
-      'name': 'English',
-    },
-    {
-      'code': 'es',
-      'name': 'Español',
-    },
-    {
-      'code': 'fr',
-      'name': 'Français',
-    },
-    {
-      'code': 'de',
-      'name': 'Deutsch',
-    },
-    {
-      'code': 'hi',
-      'name': 'हिन्दी',
-    },
-    {
-      'code': 'ta',
-      'name': 'தமிழ்',
-    },
+  static const List<Map<String, String>> supportedLanguages = [
+    {'code': 'en', 'name': 'English'},
+    {'code': 'es', 'name': 'Español'},
+    {'code': 'fr', 'name': 'Français'},
+    {'code': 'de', 'name': 'Deutsch'},
+    {'code': 'hi', 'name': 'हिन्दी'},
+    {'code': 'ta', 'name': 'தமிழ்'},
   ];
 
   // Quick Action Chips for AI
-  static const List<
-    String
-  >
-  aiQuickActions = [
+  static const List<String> aiQuickActions = [
     'Find best deals',
     'Plan shopping route',
     'Recommend products',

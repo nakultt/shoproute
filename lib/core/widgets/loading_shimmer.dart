@@ -3,9 +3,7 @@ import 'package:shimmer/shimmer.dart';
 import '../../config/theme/app_colors.dart';
 
 /// Shimmer loading placeholder for content
-class LoadingShimmer
-    extends
-        StatelessWidget {
+class LoadingShimmer extends StatelessWidget {
   final double width;
   final double height;
   final double borderRadius;
@@ -18,19 +16,11 @@ class LoadingShimmer
   });
 
   @override
-  Widget build(
-    BuildContext context,
-  ) {
-    final isDark =
-        Theme.of(
-          context,
-        ).brightness ==
-        Brightness.dark;
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Shimmer.fromColors(
-      baseColor: isDark
-          ? AppColors.surfaceDark
-          : Colors.grey[300]!,
+      baseColor: isDark ? AppColors.surfaceDark : Colors.grey[300]!,
       highlightColor: isDark
           ? AppColors.surfaceElevatedDark
           : Colors.grey[100]!,
@@ -39,9 +29,7 @@ class LoadingShimmer
         height: height,
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(
-            borderRadius,
-          ),
+          borderRadius: BorderRadius.circular(borderRadius),
         ),
       ),
     );
@@ -49,61 +37,33 @@ class LoadingShimmer
 }
 
 /// Shimmer for product card
-class ProductCardShimmer
-    extends
-        StatelessWidget {
-  const ProductCardShimmer({
-    super.key,
-  });
+class ProductCardShimmer extends StatelessWidget {
+  const ProductCardShimmer({super.key});
 
   @override
-  Widget build(
-    BuildContext context,
-  ) {
+  Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: Theme.of(
-          context,
-        ).cardColor,
-        borderRadius: BorderRadius.circular(
-          12,
-        ),
+        color: Theme.of(context).cardColor,
+        borderRadius: BorderRadius.circular(12),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const LoadingShimmer(
-            height: 120,
-            borderRadius: 12,
-          ),
+          const LoadingShimmer(height: 120, borderRadius: 12),
           Padding(
-            padding: const EdgeInsets.all(
-              12,
-            ),
+            padding: const EdgeInsets.all(12),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const LoadingShimmer(
-                  height: 14,
-                  width: 100,
-                ),
-                const SizedBox(
-                  height: 8,
-                ),
-                const LoadingShimmer(
-                  height: 12,
-                  width: 60,
-                ),
-                const SizedBox(
-                  height: 8,
-                ),
+                const LoadingShimmer(height: 14, width: 100),
+                const SizedBox(height: 8),
+                const LoadingShimmer(height: 12, width: 60),
+                const SizedBox(height: 8),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const LoadingShimmer(
-                      height: 16,
-                      width: 50,
-                    ),
+                    const LoadingShimmer(height: 16, width: 50),
                     Container(
                       width: 32,
                       height: 32,
@@ -124,57 +84,30 @@ class ProductCardShimmer
 }
 
 /// Shimmer for list item
-class ListItemShimmer
-    extends
-        StatelessWidget {
-  const ListItemShimmer({
-    super.key,
-  });
+class ListItemShimmer extends StatelessWidget {
+  const ListItemShimmer({super.key});
 
   @override
-  Widget build(
-    BuildContext context,
-  ) {
+  Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(
-        16,
-      ),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Theme.of(
-          context,
-        ).cardColor,
-        borderRadius: BorderRadius.circular(
-          12,
-        ),
+        color: Theme.of(context).cardColor,
+        borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
         children: [
-          const LoadingShimmer(
-            width: 60,
-            height: 60,
-            borderRadius: 8,
-          ),
-          const SizedBox(
-            width: 12,
-          ),
+          const LoadingShimmer(width: 60, height: 60, borderRadius: 8),
+          const SizedBox(width: 12),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const LoadingShimmer(
-                  height: 14,
-                  width: double.infinity,
-                ),
-                const SizedBox(
-                  height: 8,
-                ),
+                const LoadingShimmer(height: 14, width: double.infinity),
+                const SizedBox(height: 8),
                 LoadingShimmer(
                   height: 12,
-                  width:
-                      MediaQuery.of(
-                        context,
-                      ).size.width *
-                      0.4,
+                  width: MediaQuery.of(context).size.width * 0.4,
                 ),
               ],
             ),

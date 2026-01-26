@@ -4,134 +4,77 @@ import '../../config/theme/app_colors.dart';
 import '../../config/routes/app_router.dart';
 
 /// Main scaffold with bottom navigation bar
-class MainScaffold
-    extends
-        StatefulWidget {
+class MainScaffold extends StatefulWidget {
   final Widget child;
 
-  const MainScaffold({
-    super.key,
-    required this.child,
-  });
+  const MainScaffold({super.key, required this.child});
 
   @override
-  State<
-    MainScaffold
-  >
-  createState() => _MainScaffoldState();
+  State<MainScaffold> createState() => _MainScaffoldState();
 }
 
-class _MainScaffoldState
-    extends
-        State<
-          MainScaffold
-        > {
-  int _getCurrentIndex(
-    BuildContext context,
-  ) {
-    final location = GoRouterState.of(
-      context,
-    ).uri.path;
-    if (location.startsWith(
-      '/home',
-    )) {
+class _MainScaffoldState extends State<MainScaffold> {
+  int _getCurrentIndex(BuildContext context) {
+    final location = GoRouterState.of(context).uri.path;
+    if (location.startsWith('/home')) {
       return 0;
     }
-    if (location.startsWith(
-      '/ai',
-    )) {
+    if (location.startsWith('/ai')) {
       return 1;
     }
-    if (location.startsWith(
-      '/saved',
-    )) {
+    if (location.startsWith('/saved')) {
       return 2;
     }
-    if (location.startsWith(
-      '/map',
-    )) {
+    if (location.startsWith('/map')) {
       return 3;
     }
-    if (location.startsWith(
-      '/settings',
-    )) {
+    if (location.startsWith('/settings')) {
       return 4;
     }
     return 0;
   }
 
-  void _onItemTapped(
-    BuildContext context,
-    int index,
-  ) {
+  void _onItemTapped(BuildContext context, int index) {
     switch (index) {
       case 0:
-        context.go(
-          AppRoutes.home,
-        );
+        context.go(AppRoutes.home);
         break;
       case 1:
-        context.go(
-          AppRoutes.aiAssistant,
-        );
+        context.go(AppRoutes.aiAssistant);
         break;
       case 2:
-        context.go(
-          AppRoutes.saved,
-        );
+        context.go(AppRoutes.saved);
         break;
       case 3:
-        context.go(
-          AppRoutes.map,
-        );
+        context.go(AppRoutes.map);
         break;
       case 4:
-        context.go(
-          AppRoutes.settings,
-        );
+        context.go(AppRoutes.settings);
         break;
     }
   }
 
   @override
-  Widget build(
-    BuildContext context,
-  ) {
-    final currentIndex = _getCurrentIndex(
-      context,
-    );
-    final isDark =
-        Theme.of(
-          context,
-        ).brightness ==
-        Brightness.dark;
+  Widget build(BuildContext context) {
+    final currentIndex = _getCurrentIndex(context);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
       body: widget.child,
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
-          color: isDark
-              ? AppColors.surfaceDark
-              : AppColors.surfaceLight,
+          color: isDark ? AppColors.surfaceDark : AppColors.surfaceLight,
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(
-                0.08,
-              ),
+              color: Colors.black.withOpacity(0.08),
               blurRadius: 16,
-              offset: const Offset(
-                0,
-                -4,
-              ),
+              offset: const Offset(0, -4),
             ),
           ],
         ),
         child: SafeArea(
           child: Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 8,
-              vertical: 8,
-            ),
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
@@ -139,62 +82,37 @@ class _MainScaffoldState
                   icon: Icons.home_outlined,
                   activeIcon: Icons.home_rounded,
                   label: 'Home',
-                  isActive:
-                      currentIndex ==
-                      0,
-                  onTap: () => _onItemTapped(
-                    context,
-                    0,
-                  ),
+                  isActive: currentIndex == 0,
+                  onTap: () => _onItemTapped(context, 0),
                 ),
                 _NavItem(
                   icon: Icons.auto_awesome_outlined,
                   activeIcon: Icons.auto_awesome,
                   label: 'AI',
-                  isActive:
-                      currentIndex ==
-                      1,
-                  onTap: () => _onItemTapped(
-                    context,
-                    1,
-                  ),
+                  isActive: currentIndex == 1,
+                  onTap: () => _onItemTapped(context, 1),
                 ),
                 _NavItem(
                   icon: Icons.bookmark_border_rounded,
                   activeIcon: Icons.bookmark_rounded,
                   label: 'Saved',
-                  isActive:
-                      currentIndex ==
-                      2,
-                  onTap: () => _onItemTapped(
-                    context,
-                    2,
-                  ),
+                  isActive: currentIndex == 2,
+                  onTap: () => _onItemTapped(context, 2),
                   badgeCount: 0, // Could be connected to state
                 ),
                 _NavItem(
                   icon: Icons.map_outlined,
                   activeIcon: Icons.map_rounded,
                   label: 'Map',
-                  isActive:
-                      currentIndex ==
-                      3,
-                  onTap: () => _onItemTapped(
-                    context,
-                    3,
-                  ),
+                  isActive: currentIndex == 3,
+                  onTap: () => _onItemTapped(context, 3),
                 ),
                 _NavItem(
                   icon: Icons.settings_outlined,
                   activeIcon: Icons.settings_rounded,
                   label: 'Settings',
-                  isActive:
-                      currentIndex ==
-                      4,
-                  onTap: () => _onItemTapped(
-                    context,
-                    4,
-                  ),
+                  isActive: currentIndex == 4,
+                  onTap: () => _onItemTapped(context, 4),
                 ),
               ],
             ),
@@ -205,9 +123,7 @@ class _MainScaffoldState
   }
 }
 
-class _NavItem
-    extends
-        StatelessWidget {
+class _NavItem extends StatelessWidget {
   final IconData icon;
   final IconData activeIcon;
   final String label;
@@ -225,30 +141,19 @@ class _NavItem
   });
 
   @override
-  Widget build(
-    BuildContext context,
-  ) {
+  Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
       behavior: HitTestBehavior.opaque,
       child: AnimatedContainer(
-        duration: const Duration(
-          milliseconds: 200,
-        ),
+        duration: const Duration(milliseconds: 200),
         curve: Curves.easeInOut,
-        padding: const EdgeInsets.symmetric(
-          horizontal: 16,
-          vertical: 8,
-        ),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         decoration: BoxDecoration(
           color: isActive
-              ? AppColors.primary.withOpacity(
-                  0.1,
-                )
+              ? AppColors.primary.withOpacity(0.1)
               : Colors.transparent,
-          borderRadius: BorderRadius.circular(
-            12,
-          ),
+          borderRadius: BorderRadius.circular(12),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -257,42 +162,28 @@ class _NavItem
               clipBehavior: Clip.none,
               children: [
                 AnimatedScale(
-                  scale: isActive
-                      ? 1.1
-                      : 1.0,
-                  duration: const Duration(
-                    milliseconds: 200,
-                  ),
+                  scale: isActive ? 1.1 : 1.0,
+                  duration: const Duration(milliseconds: 200),
                   child: Icon(
-                    isActive
-                        ? activeIcon
-                        : icon,
+                    isActive ? activeIcon : icon,
                     size: 24,
                     color: isActive
                         ? AppColors.primary
                         : AppColors.textTertiaryLight,
                   ),
                 ),
-                if (badgeCount !=
-                        null &&
-                    badgeCount! >
-                        0)
+                if (badgeCount != null && badgeCount! > 0)
                   Positioned(
                     right: -6,
                     top: -4,
                     child: Container(
-                      padding: const EdgeInsets.all(
-                        4,
-                      ),
+                      padding: const EdgeInsets.all(4),
                       decoration: const BoxDecoration(
                         color: AppColors.error,
                         shape: BoxShape.circle,
                       ),
                       child: Text(
-                        badgeCount! >
-                                9
-                            ? '9+'
-                            : badgeCount.toString(),
+                        badgeCount! > 9 ? '9+' : badgeCount.toString(),
                         style: const TextStyle(
                           color: Colors.white,
                           fontSize: 10,
@@ -303,25 +194,17 @@ class _NavItem
                   ),
               ],
             ),
-            const SizedBox(
-              height: 4,
-            ),
+            const SizedBox(height: 4),
             AnimatedDefaultTextStyle(
-              duration: const Duration(
-                milliseconds: 200,
-              ),
+              duration: const Duration(milliseconds: 200),
               style: TextStyle(
                 fontSize: 11,
-                fontWeight: isActive
-                    ? FontWeight.w600
-                    : FontWeight.w500,
+                fontWeight: isActive ? FontWeight.w600 : FontWeight.w500,
                 color: isActive
                     ? AppColors.primary
                     : AppColors.textTertiaryLight,
               ),
-              child: Text(
-                label,
-              ),
+              child: Text(label),
             ),
           ],
         ),

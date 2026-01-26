@@ -11,7 +11,7 @@ import '../../features/product/presentation/pages/product_detail_page.dart';
 import '../../features/product/presentation/pages/category_products_page.dart';
 import '../../features/ai_assistant/presentation/pages/ai_assistant_page.dart';
 import '../../features/saved/presentation/pages/saved_page.dart';
-import '../../features/map/presentation/pages/map_page.dart';
+
 import '../../features/settings/presentation/pages/settings_page.dart';
 import '../../features/profile/presentation/pages/profile_page.dart';
 import '../../features/cart/presentation/pages/cart_page.dart';
@@ -34,7 +34,7 @@ class AppRoutes {
   static const String home = '/home';
   static const String aiAssistant = '/ai';
   static const String saved = '/saved';
-  static const String map = '/map';
+
   static const String settings = '/settings';
   static const String pantry = '/pantry';
 
@@ -100,11 +100,6 @@ class AppRouter {
             path: AppRoutes.saved,
             pageBuilder: (context, state) =>
                 const NoTransitionPage(child: SavedPage()),
-          ),
-          GoRoute(
-            path: AppRoutes.map,
-            pageBuilder: (context, state) =>
-                const NoTransitionPage(child: MapPage()),
           ),
           GoRoute(
             path: AppRoutes.settings,

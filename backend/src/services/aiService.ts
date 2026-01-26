@@ -25,7 +25,7 @@ export const generateChatResponse = async (
   request: ChatRequest
 ): Promise<AIResponse> => {
   try {
-    const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+    const model = genAI.getGenerativeModel({ model: "gemini-flash-latest" });
 
     // Build context for the AI
     const systemPrompt = `You are ShopRoute AI, a helpful shopping assistant.
@@ -37,6 +37,11 @@ export const generateChatResponse = async (
 
     You can help users optimize their shopping routes.
     If a user asks to modify a route, change a store, or buy specific items from specific places, verify their intent.
+    
+    CRITICAL RULE: When "optimizing" or "modifying" a route, the 'products' array in your JSON output MUST contain the COMPLETE consolidated list of products from the entire conversation history.
+    - If user says "Add milk", and history has "Bread", output: ["Bread", "Milk"].
+    - If user says "Remove Bread", output: ["Milk"].
+    - Do NOT drop previous items unless explicitly asked to remove them.
 
     You must output your response in JSON format.
     
@@ -45,7 +50,7 @@ export const generateChatResponse = async (
        "intent": "chat" | "optimize_route" | "modify_route",
        "reply": "Text response to the user",
        "data": {
-           "products": ["list", "of", "product", "names"], // If intent is optimize/modify
+           "products": ["list", "of", "ALL", "product", "names", "including", "new", "and", "existing"], // MUST include previous items unless user explicitly removes them
            "constraints": [ // Optional, if user specifies stores
                { "product": "product_name", "store": "store_name_preference" }
            ]
@@ -160,6 +165,11 @@ export const optimizeShoppingRoute = async (
   constraints: RouteConstraint[] = []
 ): Promise<RouteResult | null> => {
   try {
+    // 0. Validate input
+    if (!productNames || productNames.length === 0) {
+        return null; // Cannot optimize without products
+    }
+
     // 1. Find all product variations matching the names
     const productResults = await query(
       `SELECT p.id, p.name, p.image_url

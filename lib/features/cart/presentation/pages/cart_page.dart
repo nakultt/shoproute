@@ -244,7 +244,7 @@ class _CartPageState extends State<CartPage> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      '\$${item['price']}',
+                      '₹${item['price']}',
                       style: AppTextStyles.price(fontSize: 16),
                     ),
                     // Quantity Control
@@ -325,7 +325,7 @@ class _CartPageState extends State<CartPage> {
                 ),
               ),
               Text(
-                '\$${subtotal.toStringAsFixed(2)}',
+                '₹${subtotal.toStringAsFixed(2)}',
                 style: AppTextStyles.price(fontSize: 24),
               ),
             ],

@@ -34,24 +34,29 @@ class _MainScaffoldState
     ).uri.path;
     if (location.startsWith(
       '/home',
-    ))
+    )) {
       return 0;
+    }
     if (location.startsWith(
       '/ai',
-    ))
+    )) {
       return 1;
+    }
     if (location.startsWith(
       '/saved',
-    ))
+    )) {
       return 2;
+    }
     if (location.startsWith(
       '/map',
-    ))
+    )) {
       return 3;
+    }
     if (location.startsWith(
       '/settings',
-    ))
+    )) {
       return 4;
+    }
     return 0;
   }
 

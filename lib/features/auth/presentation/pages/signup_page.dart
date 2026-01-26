@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import '../../data/auth_service.dart';
 import '../../../../config/theme/app_colors.dart';
 import '../../../../config/theme/app_text_styles.dart';
 import '../../../../config/routes/app_router.dart';
@@ -35,6 +36,7 @@ class _SignupPageState
   final _phoneController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
+  final _authService = AuthService();
 
   bool _isLoading = false;
   bool _obscurePassword = true;
@@ -64,8 +66,9 @@ class _SignupPageState
     int strength = 0;
 
     if (password.length >=
-        8)
+        8) {
       strength++;
+    }
     if (password.contains(
           RegExp(
             r'[A-Z]',
@@ -75,8 +78,9 @@ class _SignupPageState
           RegExp(
             r'[a-z]',
           ),
-        ))
+        )) {
       strength++;
+    }
     if (password.contains(
           RegExp(
             r'[0-9]',
@@ -86,8 +90,9 @@ class _SignupPageState
           RegExp(
             r'[!@#$%^&*(),.?":{}|<>]',
           ),
-        ))
+        )) {
       strength++;
+    }
 
     setState(
       () => _passwordStrength = strength,
@@ -105,12 +110,13 @@ class _SignupPageState
     );
 
     try {
-      // TODO: Implement actual signup API call
-      await Future.delayed(
-        const Duration(
-          seconds: 2,
-        ),
-      ); // Simulated delay
+      // Call signup API
+      await _authService.register(
+        fullName: _nameController.text,
+        email: _emailController.text,
+        phone: _phoneController.text,
+        password: _passwordController.text,
+      );
 
       if (!mounted) return;
       context.go(
@@ -125,8 +131,9 @@ class _SignupPageState
       ).showSnackBar(
         SnackBar(
           content: Text(
-            'Signup failed: ${e.toString()}',
+            'Signup failed: ${e.toString().replaceAll('Exception: ', '')}',
           ),
+          backgroundColor: AppColors.error,
         ),
       );
     } finally {

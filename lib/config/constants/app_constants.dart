@@ -23,8 +23,8 @@ class AppConstants {
   static const int otpLength = 6;
 
   // Map
-  static const double defaultLatitude = 37.7749; // San Francisco
-  static const double defaultLongitude = -122.4194;
+  static const double defaultLatitude = 11.0168; // Coimbatore
+  static const double defaultLongitude = 76.9558;
   static const double defaultZoom = 14.0;
   static const double maxSearchRadius = 20000; // meters (20km)
   static const double defaultSearchRadius = 5000; // meters (5km)
@@ -38,6 +38,7 @@ class AppConstants {
   static const String searchHistoryKey = 'search_history';
 
   // Categories
+  // Categories
   static const List<
     Map<
       String,
@@ -47,69 +48,51 @@ class AppConstants {
   defaultCategories = [
     {
       'id': 0,
-      'name': 'Hot Discounts',
+      'name': 'All Products',
       'icon': '🔥',
       'color': 0xFFEF4444,
     },
     {
       'id': 1,
-      'name': 'Seasonal Offers',
-      'icon': '🎄',
-      'color': 0xFF8B5CF6,
-    },
-    {
-      'id': 2,
-      'name': 'Most Bought',
-      'icon': '🛒',
-      'color': 0xFFF59E0B,
-    },
-    {
-      'id': 3,
-      'name': 'Similar Items',
-      'icon': '💡',
-      'color': 0xFF06B6D4,
-    },
-    {
-      'id': 4,
-      'name': 'Top Rated',
-      'icon': '⭐',
-      'color': 0xFFEAB308,
-    },
-    {
-      'id': 5,
-      'name': 'Groceries',
-      'icon': '🥬',
+      'name': 'Fruits & Vegetables',
+      'icon': '🍎',
       'color': 0xFF22C55E,
     },
     {
-      'id': 6,
-      'name': 'Bakery',
+      'id': 2,
+      'name': 'Dairy & Breakfast',
+      'icon': '🥛',
+      'color': 0xFF0EA5E9,
+    },
+    {
+      'id': 3,
+      'name': 'Rice & Grains',
+      'icon': '🌾',
+      'color': 0xFFEAB308,
+    },
+    {
+      'id': 4,
+      'name': 'Bakery & Snacks',
       'icon': '🍞',
       'color': 0xFFF97316,
     },
     {
-      'id': 7,
-      'name': 'Meat & Seafood',
-      'icon': '🥩',
-      'color': 0xFFDC2626,
-    },
-    {
-      'id': 8,
+      'id': 5,
       'name': 'Beverages',
-      'icon': '🧃',
-      'color': 0xFF0EA5E9,
+      'icon': '🥤',
+      'color': 0xFF8B5CF6,
     },
     {
-      'id': 9,
+      'id': 6,
       'name': 'Personal Care',
       'icon': '🧴',
       'color': 0xFFEC4899,
     },
     {
-      'id': 10,
+      'id': 7,
       'name': 'Household',
       'icon': '🧹',
-      'color': 0xFF8B5CF6,
+      'color': 0xFF6B7280,
     },
   ];
 

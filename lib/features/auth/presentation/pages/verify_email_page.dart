@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import '../../data/auth_service.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../config/theme/app_colors.dart';
@@ -49,6 +50,7 @@ class _VerifyEmailPageState
     ) => FocusNode(),
   );
 
+  final _authService = AuthService();
   bool _isLoading = false;
   bool _canResend = false;
   int _resendTimer = 60;
@@ -133,11 +135,10 @@ class _VerifyEmailPageState
     );
 
     try {
-      // TODO: Implement actual OTP verification API call
-      await Future.delayed(
-        const Duration(
-          seconds: 2,
-        ),
+      // Call verification API
+      await _authService.verifyEmail(
+        widget.email,
+        _otp,
       );
 
       if (!mounted) return;
@@ -152,8 +153,9 @@ class _VerifyEmailPageState
       ).showSnackBar(
         SnackBar(
           content: Text(
-            'Verification failed: ${e.toString()}',
+            'Verification failed: ${e.toString().replaceAll('Exception: ', '')}',
           ),
+          backgroundColor: AppColors.error,
         ),
       );
     } finally {
@@ -172,11 +174,9 @@ class _VerifyEmailPageState
     if (!_canResend) return;
 
     try {
-      // TODO: Implement actual resend OTP API call
-      await Future.delayed(
-        const Duration(
-          seconds: 1,
-        ),
+      // Call resend OTP API
+      await _authService.resendOtp(
+        widget.email,
       );
 
       if (!mounted) return;
@@ -198,8 +198,9 @@ class _VerifyEmailPageState
       ).showSnackBar(
         SnackBar(
           content: Text(
-            'Failed to resend OTP: ${e.toString()}',
+            'Failed to resend OTP: ${e.toString().replaceAll('Exception: ', '')}',
           ),
+          backgroundColor: AppColors.error,
         ),
       );
     }

@@ -3,7 +3,7 @@ class ApiEndpoints {
   ApiEndpoints._();
 
   // Base URL - Change this for production
-  static const String baseUrl = 'http://localhost:3000';
+  static const String baseUrl = 'http://192.168.0.111:3000';
   static const String apiVersion = '/api';
 
   // Full API base

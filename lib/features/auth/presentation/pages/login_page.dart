@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../data/auth_service.dart';
 import '../../../../config/theme/app_colors.dart';
 import '../../../../config/theme/app_text_styles.dart';
 import '../../../../config/routes/app_router.dart';
@@ -34,6 +35,7 @@ class _LoginPageState
       >();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  final _authService = AuthService();
 
   bool _isLoading = false;
   bool _obscurePassword = true;
@@ -169,12 +171,11 @@ class _LoginPageState
       // Save remember me preference
       await _saveRememberMe();
 
-      // TODO: Implement actual login API call
-      await Future.delayed(
-        const Duration(
-          seconds: 2,
-        ),
-      ); // Simulated delay
+      // Call login API
+      await _authService.login(
+        _emailController.text,
+        _passwordController.text,
+      );
 
       if (!mounted) return;
       context.go(
@@ -185,7 +186,10 @@ class _LoginPageState
     ) {
       setState(
         () {
-          _errorMessage = 'Invalid credentials. Please try again.';
+          _errorMessage = e.toString().replaceAll(
+            'Exception: ',
+            '',
+          );
         },
       );
       _shakeError();

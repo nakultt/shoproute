@@ -30,10 +30,13 @@ router.get(
       SELECT DISTINCT p.*, c.name as category_name, c.icon as category_icon,
              MIN(sp.price) as min_price, MAX(sp.price) as max_price,
              COUNT(DISTINCT sp.store_id) as store_count,
-             BOOL_OR(sp.is_available AND sp.stock_count > 0) as is_available
+             BOOL_OR(sp.is_available AND sp.stock_count > 0) as is_available,
+             (ARRAY_AGG(sp.store_id ORDER BY sp.price ASC))[1] as store_id,
+             (ARRAY_AGG(s.name ORDER BY sp.price ASC))[1] as store_name
       FROM products p
       LEFT JOIN categories c ON p.category_id = c.id
       LEFT JOIN store_products sp ON p.id = sp.product_id
+      LEFT JOIN stores s ON sp.store_id = s.id
     `;
 
       const params: any[] = [];
@@ -96,6 +99,7 @@ router.get(
         `SELECT COUNT(DISTINCT p.id) FROM products p
        LEFT JOIN categories c ON p.category_id = c.id
        LEFT JOIN store_products sp ON p.id = sp.product_id
+       LEFT JOIN stores s ON sp.store_id = s.id
        ${conditions.length > 0 ? "WHERE " + conditions.join(" AND ") : ""}`,
         params
       );

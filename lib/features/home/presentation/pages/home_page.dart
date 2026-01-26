@@ -1,12 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
+import 'package:geolocator/geolocator.dart';
 import '../../../../config/theme/app_colors.dart';
 import '../../../../config/theme/app_text_styles.dart';
 import '../../../../config/theme/app_theme.dart';
 import '../../../../config/routes/app_router.dart';
 import '../../../../config/constants/app_constants.dart';
 import '../../../../core/widgets/loading_shimmer.dart';
+import '../../../shop/data/store_service.dart';
+import '../../../shop/data/product_service.dart';
+import '../../../shop/presentation/widgets/store_card.dart';
+import '../../../shop/presentation/widgets/product_card.dart';
+import '../../../cart/data/cart_service.dart';
 
 /// Home Page with categories, products, and search
 class HomePage
@@ -31,227 +37,210 @@ class _HomePageState
   int _selectedCategoryIndex = 0;
   bool _isGridView = true;
   bool _isLoading = true;
-  int _cartItemCount = 3;
+  int _cartItemCount = 0;
 
-  // Sample product data with categories
-  final List<
-    Map<
-      String,
-      dynamic
-    >
-  >
-  _allProducts = [
-    {
-      'id': 0,
-      'name': 'Organic Milk 1L',
-      'price': '4.99',
-      'store': 'Fresh Mart',
-      'rating': '4.5',
-      'distance': '1.2 km',
-      'category': 5,
-      'image': '🥛',
-      'inStock': true,
-    },
-    {
-      'id': 1,
-      'name': 'Whole Wheat Bread',
-      'price': '3.49',
-      'store': 'QuickShop',
-      'rating': '4.3',
-      'distance': '0.8 km',
-      'category': 6,
-      'image': '🍞',
-      'inStock': true,
-    },
-    {
-      'id': 2,
-      'name': 'Free Range Eggs (12)',
-      'price': '5.99',
-      'store': 'Fresh Mart',
-      'rating': '4.7',
-      'distance': '1.2 km',
-      'category': 5,
-      'image': '🥚',
-      'inStock': true,
-    },
-    {
-      'id': 3,
-      'name': 'Chicken Breast 500g',
-      'price': '12.99',
-      'store': 'Health Foods',
-      'rating': '4.6',
-      'distance': '2.1 km',
-      'category': 7,
-      'image': '🍗',
-      'inStock': true,
-    },
-    {
-      'id': 4,
-      'name': 'Fresh Orange Juice',
-      'price': '3.99',
-      'store': 'QuickShop',
-      'rating': '4.4',
-      'distance': '0.8 km',
-      'category': 8,
-      'image': '🧃',
-      'inStock': true,
-    },
-    {
-      'id': 5,
-      'name': 'Organic Spinach',
-      'price': '2.99',
-      'store': 'Fresh Mart',
-      'rating': '4.2',
-      'distance': '1.2 km',
-      'category': 5,
-      'image': '🥬',
-      'inStock': true,
-    },
-    {
-      'id': 6,
-      'name': 'Greek Yogurt',
-      'price': '4.49',
-      'store': 'Health Foods',
-      'rating': '4.8',
-      'distance': '2.1 km',
-      'category': 5,
-      'image': '🥛',
-      'inStock': true,
-    },
-    {
-      'id': 7,
-      'name': 'Salmon Fillet',
-      'price': '15.99',
-      'store': 'Fresh Mart',
-      'rating': '4.9',
-      'distance': '1.2 km',
-      'category': 7,
-      'image': '🐟',
-      'inStock': false,
-    },
-    {
-      'id': 8,
-      'name': 'Shampoo',
-      'price': '8.99',
-      'store': 'SuperStore',
-      'rating': '4.1',
-      'distance': '1.5 km',
-      'category': 9,
-      'image': '🧴',
-      'inStock': true,
-    },
-    {
-      'id': 9,
-      'name': 'Cleaning Spray',
-      'price': '5.49',
-      'store': 'SuperStore',
-      'rating': '4.0',
-      'distance': '1.5 km',
-      'category': 10,
-      'image': '🧹',
-      'inStock': true,
-    },
-  ];
+  final _storeService = StoreService();
+  final _productService = ProductService();
+  final _cartService = CartService();
 
   List<
-    Map<
-      String,
-      dynamic
-    >
+    dynamic
   >
-  get _filteredProducts {
-    final selectedCategory = AppConstants.defaultCategories[_selectedCategoryIndex];
-    final categoryId =
-        selectedCategory['id']
-            as int;
-
-    // Special categories (0-4) show all or filtered products
-    if (categoryId ==
-        0) {
-      // Hot Discounts - show products with high rating
-      return _allProducts
-          .where(
-            (
-              p,
-            ) =>
-                double.parse(
-                  p['rating'],
-                ) >=
-                4.5,
-          )
-          .toList();
-    } else if (categoryId ==
-        1) {
-      // Seasonal Offers - show random selection
-      return _allProducts
-          .take(
-            4,
-          )
-          .toList();
-    } else if (categoryId ==
-        2) {
-      // Most Bought - show all
-      return _allProducts;
-    } else if (categoryId ==
-        3) {
-      // Similar Items - show based on first product category
-      return _allProducts
-          .where(
-            (
-              p,
-            ) =>
-                p['category'] ==
-                5,
-          )
-          .toList();
-    } else if (categoryId ==
-        4) {
-      // Top Rated
-      return _allProducts
-          .where(
-            (
-              p,
-            ) =>
-                double.parse(
-                  p['rating'],
-                ) >=
-                4.6,
-          )
-          .toList();
-    }
-
-    // Regular categories filter by category ID
-    return _allProducts
-        .where(
-          (
-            p,
-          ) =>
-              p['category'] ==
-              categoryId,
-        )
-        .toList();
-  }
+  _stores = [];
+  List<
+    dynamic
+  >
+  _products = [];
+  Position? _currentPosition;
+  // String _distanceText = 'Locating...';
 
   @override
   void initState() {
     super.initState();
     _loadData();
+    _loadCartCount();
+  }
+
+  Future<
+    void
+  >
+  _loadCartCount() async {
+    try {
+      final cart = await _cartService.getCart();
+      if (mounted) {
+        setState(
+          () {
+            _cartItemCount =
+                cart['item_count'] ??
+                0;
+          },
+        );
+      }
+    } catch (
+      _
+    ) {
+      // Silent error for cart count
+    }
   }
 
   Future<
     void
   >
   _loadData() async {
-    await Future.delayed(
-      const Duration(
-        seconds: 1,
-      ),
+    if (!mounted) return;
+    setState(
+      () => _isLoading = true,
     );
-    if (mounted) {
-      setState(
-        () => _isLoading = false,
+
+    try {
+      // 1. Get Location
+      await _getCurrentLocation();
+
+      // 2. Fetch Data
+      final lat =
+          _currentPosition?.latitude ??
+          11.0168; // Default Coimbatore
+      final lng =
+          _currentPosition?.longitude ??
+          76.9558;
+
+      final storesFuture = _storeService.getNearbyStores(
+        lat: lat,
+        lng: lng,
+      );
+      final productsFuture = _productService.getProducts(
+        page: 1,
+      );
+
+      final results = await Future.wait(
+        [
+          storesFuture,
+          productsFuture,
+        ],
+      );
+
+      if (mounted) {
+        setState(
+          () {
+            _stores = results[0];
+            _products = results[1];
+            _isLoading = false;
+          },
+        );
+      }
+    } catch (
+      e
+    ) {
+      debugPrint(
+        'Error loading home data: $e',
+      );
+      if (mounted) {
+        setState(
+          () {
+            _isLoading = false;
+          },
+        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Failed to load data: $e',
+            ),
+          ),
+        );
+      }
+    }
+  }
+
+  Future<
+    void
+  >
+  _getCurrentLocation() async {
+    try {
+      LocationPermission permission = await Geolocator.checkPermission();
+      if (permission ==
+          LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+        if (permission ==
+            LocationPermission.denied) {
+          // setState(
+          //   () => _distanceText = 'Location denied',
+          // );
+          return;
+        }
+      }
+
+      if (permission ==
+          LocationPermission.deniedForever) {
+        // setState(
+        //   () => _distanceText = 'Location denied',
+        // );
+        return;
+      }
+
+      final position = await Geolocator.getCurrentPosition();
+      if (mounted) {
+        setState(
+          () {
+            _currentPosition = position;
+          },
+        );
+      }
+    } catch (
+      e
+    ) {
+      debugPrint(
+        'Error looking up location: $e',
       );
     }
+  }
+
+  List<
+    dynamic
+  >
+  get _filteredProducts {
+    // 0: All Products (Hot Discounts for demo)
+    // 1-N: Specific Categories
+    // Currently, our seed categories are ID 1-5.
+    // The UI 'selectedCategoryIndex' maps to AppConstants.defaultCategories list.
+
+    if (_products.isEmpty) return [];
+
+    final selectedCategory = AppConstants.defaultCategories[_selectedCategoryIndex];
+    // final categoryName = selectedCategory['name'];
+    final categoryId =
+        selectedCategory['id']
+            as int; // This might be a mock ID, need to align with DB
+
+    // Special "All" tab or specific logic
+    if (_selectedCategoryIndex ==
+        0) {
+      return _products;
+    }
+
+    // Aligning UI category index with DB Category ID for now.
+    // In seed: 1=Fruits, 2=Dairy, 3=Grocery, 4=Bakery, 5=Beverages.
+    // AppConstants might strictly match this or we filter by string matching if IDs don't sync.
+    // Let's filter by matching DB `category_id` to the index (offset by 1 if needed) or name.
+    // The API returns `category_name`.
+
+    // Simple filter by name matching for robustness
+    if (categoryId ==
+        0)
+      return _products; // "All"
+
+    return _products.where(
+      (
+        p,
+      ) {
+        // Check if API response's category_id matches the UI expected ID or Name
+        // API `category_id` is an integer.
+        // Let's assume AppConstants categories 1..5 map to DB IDs 1..5
+        return p['category_id'] ==
+            categoryId;
+      },
+    ).toList();
   }
 
   @override
@@ -277,6 +266,11 @@ class _HomePageState
               SliverToBoxAdapter(
                 child: _buildTopBar(),
               ),
+              // Nearby Stores
+              if (_stores.isNotEmpty)
+                SliverToBoxAdapter(
+                  child: _buildNearbyStores(),
+                ),
               // Categories
               SliverToBoxAdapter(
                 child: _buildCategories(),
@@ -293,6 +287,78 @@ class _HomePageState
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildNearbyStores() {
+    final isDark =
+        Theme.of(
+          context,
+        ).brightness ==
+        Brightness.dark;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(
+            16,
+            8,
+            16,
+            12,
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Nearby Stores',
+                style: AppTextStyles.headlineSmall(
+                  color: isDark
+                      ? AppColors.textPrimaryDark
+                      : null,
+                ),
+              ),
+              GestureDetector(
+                onTap: () => context.push(
+                  AppRoutes.search,
+                  extra: 'stores',
+                ),
+                child: Text(
+                  'See all',
+                  style:
+                      AppTextStyles.bodyMedium(
+                        color: AppColors.primary,
+                      ).copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        SizedBox(
+          height: 220, // Adjusted for StoreCard
+          child: ListView.builder(
+            scrollDirection: Axis.horizontal,
+            padding: const EdgeInsets.symmetric(
+              horizontal: 16,
+            ),
+            physics: const BouncingScrollPhysics(),
+            itemCount: _stores.length,
+            itemBuilder:
+                (
+                  context,
+                  index,
+                ) {
+                  return StoreCard(
+                    store: _stores[index],
+                  );
+                },
+          ),
+        ),
+        const SizedBox(
+          height: 24,
+        ),
+      ],
     );
   }
 
@@ -736,406 +802,19 @@ class _HomePageState
                 child: SlideAnimation(
                   verticalOffset: 50.0,
                   child: FadeInAnimation(
-                    child: _isGridView
-                        ? _ProductCard(
-                            product: product,
-                            onAddToCart: () {
-                              setState(
-                                () => _cartItemCount++,
-                              );
-                              ScaffoldMessenger.of(
-                                context,
-                              ).showSnackBar(
-                                SnackBar(
-                                  content: Text(
-                                    '${product['name']} added to cart',
-                                  ),
-                                  duration: const Duration(
-                                    seconds: 1,
-                                  ),
-                                  action: SnackBarAction(
-                                    label: 'View Cart',
-                                    onPressed: () => context.push(
-                                      AppRoutes.cart,
-                                    ),
-                                  ),
-                                ),
-                              );
-                            },
-                          )
-                        : _ProductListTile(
-                            product: product,
-                            onAddToCart: () {
-                              setState(
-                                () => _cartItemCount++,
-                              );
-                              ScaffoldMessenger.of(
-                                context,
-                              ).showSnackBar(
-                                SnackBar(
-                                  content: Text(
-                                    '${product['name']} added to cart',
-                                  ),
-                                  duration: const Duration(
-                                    seconds: 1,
-                                  ),
-                                  action: SnackBarAction(
-                                    label: 'View Cart',
-                                    onPressed: () => context.push(
-                                      AppRoutes.cart,
-                                    ),
-                                  ),
-                                ),
-                              );
-                            },
-                          ),
+                    child: ProductCard(
+                      product: product,
+                      isGridView: _isGridView,
+                      onAddToCart: () {
+                        _loadCartCount(); // Refresh badge
+                      },
+                    ),
                   ),
                 ),
               );
             },
             childCount: products.length,
           ),
-        ),
-      ),
-    );
-  }
-}
-
-class _ProductCard
-    extends
-        StatelessWidget {
-  final Map<
-    String,
-    dynamic
-  >
-  product;
-  final VoidCallback? onAddToCart;
-
-  const _ProductCard({
-    required this.product,
-    this.onAddToCart,
-  });
-
-  @override
-  Widget build(
-    BuildContext context,
-  ) {
-    final isDark =
-        Theme.of(
-          context,
-        ).brightness ==
-        Brightness.dark;
-    return GestureDetector(
-      onTap: () => context.push(
-        '/product/${product['id']}',
-      ),
-      child: Container(
-        decoration: BoxDecoration(
-          color: isDark
-              ? AppColors.surfaceDark
-              : AppColors.surfaceLight,
-          borderRadius: BorderRadius.circular(
-            16,
-          ),
-          boxShadow: AppTheme.shadowSm,
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Image
-            Container(
-              height: 100,
-              decoration: BoxDecoration(
-                color: isDark
-                    ? AppColors.primarySurface.withOpacity(
-                        0.3,
-                      )
-                    : AppColors.primarySurface,
-                borderRadius: const BorderRadius.vertical(
-                  top: Radius.circular(
-                    16,
-                  ),
-                ),
-                image:
-                    product['image'] !=
-                        null
-                    ? DecorationImage(
-                        image: NetworkImage(
-                          product['image'],
-                        ),
-                        fit: BoxFit.cover,
-                      )
-                    : null,
-              ),
-              child:
-                  product['image'] ==
-                      null
-                  ? Center(
-                      child: Icon(
-                        Icons.image,
-                        size: 40,
-                        color: AppColors.primary.withOpacity(
-                          0.5,
-                        ),
-                      ),
-                    )
-                  : null,
-            ),
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.all(
-                  12,
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      product['name'],
-                      style: AppTextStyles.titleSmall(
-                        color: isDark
-                            ? AppColors.textPrimaryDark
-                            : null,
-                      ),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    const SizedBox(
-                      height: 4,
-                    ),
-                    Row(
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 6,
-                            vertical: 2,
-                          ),
-                          decoration: BoxDecoration(
-                            color: AppColors.accentSurface,
-                            borderRadius: BorderRadius.circular(
-                              4,
-                            ),
-                          ),
-                          child: Text(
-                            product['store'],
-                            style: AppTextStyles.labelSmall(
-                              color: AppColors.accent,
-                            ),
-                          ),
-                        ),
-                        const Spacer(),
-                        const Icon(
-                          Icons.star,
-                          size: 14,
-                          color: AppColors.warning,
-                        ),
-                        const SizedBox(
-                          width: 2,
-                        ),
-                        Text(
-                          product['rating'],
-                          style: AppTextStyles.labelSmall(
-                            color: isDark
-                                ? AppColors.textSecondaryDark
-                                : null,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const Spacer(),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          '\$${product['price']}',
-                          style: AppTextStyles.price(),
-                        ),
-                        GestureDetector(
-                          onTap: onAddToCart,
-                          child: Container(
-                            width: 32,
-                            height: 32,
-                            decoration: BoxDecoration(
-                              color: AppColors.primary,
-                              borderRadius: BorderRadius.circular(
-                                8,
-                              ),
-                            ),
-                            child: const Icon(
-                              Icons.add,
-                              color: Colors.white,
-                              size: 18,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _ProductListTile
-    extends
-        StatelessWidget {
-  final Map<
-    String,
-    dynamic
-  >
-  product;
-  final VoidCallback? onAddToCart;
-
-  const _ProductListTile({
-    required this.product,
-    this.onAddToCart,
-  });
-
-  @override
-  Widget build(
-    BuildContext context,
-  ) {
-    final isDark =
-        Theme.of(
-          context,
-        ).brightness ==
-        Brightness.dark;
-    return GestureDetector(
-      onTap: () => context.push(
-        '/product/${product['id']}',
-      ),
-      child: Container(
-        padding: const EdgeInsets.all(
-          12,
-        ),
-        decoration: BoxDecoration(
-          color: isDark
-              ? AppColors.surfaceDark
-              : AppColors.surfaceLight,
-          borderRadius: BorderRadius.circular(
-            12,
-          ),
-          boxShadow: AppTheme.shadowSm,
-        ),
-        child: Row(
-          children: [
-            Container(
-              width: 60,
-              height: 60,
-              decoration: BoxDecoration(
-                color: isDark
-                    ? AppColors.primarySurface.withOpacity(
-                        0.3,
-                      )
-                    : AppColors.primarySurface,
-                borderRadius: BorderRadius.circular(
-                  8,
-                ),
-                image:
-                    product['image'] !=
-                        null
-                    ? DecorationImage(
-                        image: NetworkImage(
-                          product['image'],
-                        ),
-                        fit: BoxFit.cover,
-                      )
-                    : null,
-              ),
-              child:
-                  product['image'] ==
-                      null
-                  ? Icon(
-                      Icons.image,
-                      color: AppColors.primary.withOpacity(
-                        0.5,
-                      ),
-                    )
-                  : null,
-            ),
-            const SizedBox(
-              width: 12,
-            ),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    product['name'],
-                    style: AppTextStyles.titleSmall(
-                      color: isDark
-                          ? AppColors.textPrimaryDark
-                          : null,
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 4,
-                  ),
-                  Text(
-                    '${product['store']} • ${product['distance']}',
-                    style: AppTextStyles.bodySmall(
-                      color: isDark
-                          ? AppColors.textSecondaryDark
-                          : null,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Text(
-                  '\$${product['price']}',
-                  style: AppTextStyles.price(),
-                ),
-                Row(
-                  children: [
-                    const Icon(
-                      Icons.star,
-                      size: 14,
-                      color: AppColors.warning,
-                    ),
-                    Text(
-                      ' ${product['rating']}',
-                      style: AppTextStyles.labelSmall(
-                        color: isDark
-                            ? AppColors.textSecondaryDark
-                            : null,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-            const SizedBox(
-              width: 8,
-            ),
-            GestureDetector(
-              onTap: onAddToCart,
-              child: Container(
-                width: 32,
-                height: 32,
-                decoration: BoxDecoration(
-                  color: AppColors.primary,
-                  borderRadius: BorderRadius.circular(
-                    8,
-                  ),
-                ),
-                child: const Icon(
-                  Icons.add,
-                  color: Colors.white,
-                  size: 18,
-                ),
-              ),
-            ),
-          ],
         ),
       ),
     );

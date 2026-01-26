@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import '../../../auth/data/auth_service.dart';
 import '../../../../config/theme/app_colors.dart';
 import '../../../../config/theme/app_text_styles.dart';
 import '../../../../config/theme/app_theme.dart';
@@ -25,9 +26,45 @@ class _ProfilePageState
         State<
           ProfilePage
         > {
-  String _userName = 'John Doe';
-  String _userEmail = 'john.doe@email.com';
+  String _userName = 'Loading...';
+  String _userEmail = '...';
   String? _avatarUrl;
+  final _authService = AuthService();
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserProfile();
+  }
+
+  Future<
+    void
+  >
+  _loadUserProfile() async {
+    try {
+      final user = await _authService.getCurrentUser();
+      if (mounted) {
+        setState(
+          () {
+            _userName =
+                user['full_name'] ??
+                'User';
+            _userEmail =
+                user['email'] ??
+                '';
+            _avatarUrl = user['profile_picture'];
+          },
+        );
+      }
+    } catch (
+      e
+    ) {
+      // Handle error gently, maybe user is offline or token expired
+      print(
+        'Error loading profile: $e',
+      );
+    }
+  }
 
   void _showEditProfileDialog() {
     final nameController = TextEditingController(

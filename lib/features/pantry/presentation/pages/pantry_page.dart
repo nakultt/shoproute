@@ -159,8 +159,9 @@ class _PantryPageState
   >
   get _filteredItems {
     if (_selectedLocation ==
-        'all')
+        'all') {
       return _pantryItems;
+    }
     return _pantryItems
         .where(
           (
@@ -247,11 +248,13 @@ class _PantryPageState
         )
         .inDays;
     if (daysUntil <
-        0)
+        0) {
       return 'expired';
+    }
     if (daysUntil <=
-        3)
+        3) {
       return 'expiring_soon';
+    }
     return 'fresh';
   }
 
@@ -1271,7 +1274,7 @@ class _PantryPageState
                             decoration: const InputDecoration(
                               labelText: 'Unit',
                             ),
-                            value: 'unit',
+                            initialValue: 'unit',
                             items: const [
                               DropdownMenuItem(
                                 value: 'unit',
@@ -1330,7 +1333,7 @@ class _PantryPageState
                       Icons.location_on,
                     ),
                   ),
-                  value: 'pantry',
+                  initialValue: 'pantry',
                   items: const [
                     DropdownMenuItem(
                       value: 'pantry',
@@ -1481,7 +1484,7 @@ class _PantryPageState
                             decoration: const InputDecoration(
                               labelText: 'Unit',
                             ),
-                            value: item['unit'],
+                            initialValue: item['unit'],
                             items: const [
                               DropdownMenuItem(
                                 value: 'unit',

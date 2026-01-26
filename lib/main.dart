@@ -6,7 +6,7 @@ import 'config/routes/app_router.dart';
 
 void
 main() async {
-  WidgetsFlutterBinding.ensureInitialized();
+  WidgetsFlutterBinding.ensureInitialized(); 
 
   // Set preferred orientations
   await SystemChrome.setPreferredOrientations(

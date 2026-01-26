@@ -221,17 +221,21 @@ class _RatingWidgetState
     double rating,
   ) {
     if (rating <=
-        1)
+        1) {
       return 'Poor';
+    }
     if (rating <=
-        2)
+        2) {
       return 'Fair';
+    }
     if (rating <=
-        3)
+        3) {
       return 'Good';
+    }
     if (rating <=
-        4)
+        4) {
       return 'Very Good';
+    }
     return 'Excellent';
   }
 

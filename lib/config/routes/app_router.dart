@@ -17,6 +17,7 @@ import '../../features/profile/presentation/pages/profile_page.dart';
 import '../../features/cart/presentation/pages/cart_page.dart';
 import '../../features/search/presentation/pages/search_page.dart';
 import '../../features/pantry/presentation/pages/pantry_page.dart';
+import '../../features/shop/presentation/pages/store_detail_page.dart';
 import '../../core/widgets/main_scaffold.dart';
 
 /// Route names for navigation
@@ -214,6 +215,24 @@ class AppRouter {
             },
       ),
       GoRoute(
+        path: AppRoutes.storeDetail,
+        builder:
+            (
+              context,
+              state,
+            ) {
+              final id =
+                  int.tryParse(
+                    state.pathParameters['id'] ??
+                        '',
+                  ) ??
+                  0;
+              return StoreDetailPage(
+                storeId: id,
+              );
+            },
+      ),
+      GoRoute(
         path: AppRoutes.profile,
         builder:
             (
@@ -236,11 +255,23 @@ class AppRouter {
               context,
               state,
             ) {
-              final query =
-                  state.extra
-                      as String?;
+              final extra = state.extra;
+              String? query;
+              String? filter;
+
+              if (extra
+                  is String) {
+                if (extra ==
+                    'stores') {
+                  filter = 'stores';
+                } else {
+                  query = extra;
+                }
+              }
+
               return SearchPage(
                 initialQuery: query,
+                initialFilter: filter,
               );
             },
       ),

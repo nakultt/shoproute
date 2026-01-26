@@ -9,10 +9,12 @@ class SearchPage
     extends
         StatefulWidget {
   final String? initialQuery;
+  final String? initialFilter;
 
   const SearchPage({
     super.key,
     this.initialQuery,
+    this.initialFilter,
   });
 
   @override
@@ -79,6 +81,14 @@ class _SearchPageState
       _performSearch(
         widget.initialQuery!,
       );
+    } else if (widget.initialFilter ==
+        'stores') {
+      _selectedFilter = 'stores';
+      // Auto-trigger search for stores (empty query implies 'all' nearby if backend supports,
+      // but here we might need to simulate a generic search or just set state)
+      _performSearch(
+        '',
+      );
     }
     WidgetsBinding.instance.addPostFrameCallback(
       (
@@ -99,7 +109,9 @@ class _SearchPageState
   void _performSearch(
     String query,
   ) {
-    if (query.isEmpty) {
+    if (query.isEmpty &&
+        _selectedFilter ==
+            'all') {
       setState(
         () {
           _productResults = [];

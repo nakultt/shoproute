@@ -9,24 +9,43 @@ import '../../../cart/data/cart_service.dart';
 import '../../../profile/data/user_service.dart';
 
 /// Product Detail Page
-class ProductDetailPage extends StatefulWidget {
+class ProductDetailPage
+    extends
+        StatefulWidget {
   final int productId;
 
-  const ProductDetailPage({super.key, required this.productId});
+  const ProductDetailPage({
+    super.key,
+    required this.productId,
+  });
 
   @override
-  State<ProductDetailPage> createState() => _ProductDetailPageState();
+  State<
+    ProductDetailPage
+  >
+  createState() => _ProductDetailPageState();
 }
 
-class _ProductDetailPageState extends State<ProductDetailPage> {
+class _ProductDetailPageState
+    extends
+        State<
+          ProductDetailPage
+        > {
   final _productService = ProductService();
   final _cartService = CartService();
   final _userService = UserService();
 
   bool _isLoading = true;
   bool _isFavorite = false;
-  Map<String, dynamic>? _productData;
-  List<dynamic> _stores = [];
+  Map<
+    String,
+    dynamic
+  >?
+  _productData;
+  List<
+    dynamic
+  >
+  _stores = [];
   int _quantity = 1;
   bool _isAddingToCart = false;
 
@@ -36,42 +55,81 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
     _loadData();
   }
 
-  Future<void> _loadData() async {
+  Future<
+    void
+  >
+  _loadData() async {
     try {
-      final data = await _productService.getProductDetails(widget.productId);
+      final data = await _productService.getProductDetails(
+        widget.productId,
+      );
       if (mounted) {
-        setState(() {
-          _productData = data['product'];
-          _stores = data['stores'] ?? [];
-          _isLoading = false;
-        });
+        setState(
+          () {
+            _productData = data['product'];
+            _stores =
+                data['stores'] ??
+                [];
+            _isLoading = false;
+          },
+        );
       }
-    } catch (e) {
+    } catch (
+      e
+    ) {
       if (mounted) {
-        setState(() => _isLoading = false);
+        setState(
+          () => _isLoading = false,
+        );
         ScaffoldMessenger.of(
           context,
-        ).showSnackBar(SnackBar(content: Text('Failed to load product: $e')));
+        ).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Failed to load product: $e',
+            ),
+          ),
+        );
       }
     }
   }
 
   void _toggleFavorite() async {
-    setState(() => _isFavorite = !_isFavorite);
+    setState(
+      () => _isFavorite = !_isFavorite,
+    );
     try {
-      await _userService.toggleFavorite('products', widget.productId);
-    } catch (e) {
-      if (mounted) setState(() => _isFavorite = !_isFavorite);
+      await _userService.toggleFavorite(
+        'products',
+        widget.productId,
+      );
+    } catch (
+      e
+    ) {
+      if (mounted) {
+        setState(
+          () => _isFavorite = !_isFavorite,
+        );
+      }
     }
   }
 
-  Future<void> _addToCart() async {
+  Future<
+    void
+  >
+  _addToCart() async {
     if (_isAddingToCart) return;
 
     // Default to best store (first one typically sorted by price) or throw error
     if (_stores.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Product not available in any store')),
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'Product not available in any store',
+          ),
+        ),
       );
       return;
     }
@@ -79,18 +137,33 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
     // For now, simple logic: pick the first available store
     // In a real app, user selects the store from the list
     final bestStore = _stores.firstWhere(
-      (s) => s['is_available'] == true && s['stock_count'] > 0,
+      (
+        s,
+      ) =>
+          s['is_available'] ==
+              true &&
+          s['stock_count'] >
+              0,
       orElse: () => null,
     );
 
-    if (bestStore == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Out of stock in all nearby stores')),
+    if (bestStore ==
+        null) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'Out of stock in all nearby stores',
+          ),
+        ),
       );
       return;
     }
 
-    setState(() => _isAddingToCart = true);
+    setState(
+      () => _isAddingToCart = true,
+    );
 
     try {
       await _cartService.addToCart(
@@ -100,36 +173,69 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
       );
 
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('${_productData!['name']} added to cart')),
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(
+          SnackBar(
+            content: Text(
+              '${_productData!['name']} added to cart',
+            ),
+          ),
         );
       }
-    } catch (e) {
+    } catch (
+      e
+    ) {
       if (mounted) {
         ScaffoldMessenger.of(
           context,
-        ).showSnackBar(SnackBar(content: Text('Failed to add to cart: $e')));
+        ).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Failed to add to cart: $e',
+            ),
+          ),
+        );
       }
     } finally {
-      if (mounted) setState(() => _isAddingToCart = false);
+      if (mounted) {
+        setState(
+          () => _isAddingToCart = false,
+        );
+      }
     }
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(
+    BuildContext context,
+  ) {
     if (_isLoading) {
-      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+      return const Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
     }
 
-    if (_productData == null) {
+    if (_productData ==
+        null) {
       return Scaffold(
         appBar: AppBar(),
-        body: const Center(child: Text('Product not found')),
+        body: const Center(
+          child: Text(
+            'Product not found',
+          ),
+        ),
       );
     }
 
     final product = _productData!;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark =
+        Theme.of(
+          context,
+        ).brightness ==
+        Brightness.dark;
 
     return Scaffold(
       backgroundColor: isDark
@@ -147,9 +253,13 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
             leading: GestureDetector(
               onTap: () => context.pop(),
               child: Container(
-                margin: const EdgeInsets.all(8),
+                margin: const EdgeInsets.all(
+                  8,
+                ),
                 decoration: BoxDecoration(
-                  color: isDark ? AppColors.surfaceDark : Colors.white,
+                  color: isDark
+                      ? AppColors.surfaceDark
+                      : Colors.white,
                   shape: BoxShape.circle,
                   boxShadow: AppTheme.shadowSm,
                 ),
@@ -165,15 +275,23 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
               GestureDetector(
                 onTap: _toggleFavorite,
                 child: Container(
-                  margin: const EdgeInsets.all(8),
-                  padding: const EdgeInsets.all(8),
+                  margin: const EdgeInsets.all(
+                    8,
+                  ),
+                  padding: const EdgeInsets.all(
+                    8,
+                  ),
                   decoration: BoxDecoration(
-                    color: isDark ? AppColors.surfaceDark : Colors.white,
+                    color: isDark
+                        ? AppColors.surfaceDark
+                        : Colors.white,
                     shape: BoxShape.circle,
                     boxShadow: AppTheme.shadowSm,
                   ),
                   child: Icon(
-                    _isFavorite ? Icons.favorite : Icons.favorite_border,
+                    _isFavorite
+                        ? Icons.favorite
+                        : Icons.favorite_border,
                     color: _isFavorite
                         ? AppColors.error
                         : (isDark
@@ -186,19 +304,31 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
             flexibleSpace: FlexibleSpaceBar(
               background: Container(
                 color: AppColors.primarySurface,
-                child: product['image_url'] != null
+                child:
+                    product['image_url'] !=
+                        null
                     ? Image.network(
                         product['image_url'],
                         fit: BoxFit.cover,
-                        errorBuilder: (c, e, s) => const Center(
-                          child: Icon(Icons.broken_image, size: 60),
-                        ),
+                        errorBuilder:
+                            (
+                              c,
+                              e,
+                              s,
+                            ) => const Center(
+                              child: Icon(
+                                Icons.broken_image,
+                                size: 60,
+                              ),
+                            ),
                       )
                     : Center(
                         child: Icon(
                           Icons.image,
                           size: 100,
-                          color: AppColors.primary.withOpacity(0.3),
+                          color: AppColors.primary.withValues(
+                            alpha: 0.3,
+                          ),
                         ),
                       ),
               ),
@@ -208,12 +338,15 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
           // Product Info
           SliverToBoxAdapter(
             child: Padding(
-              padding: const EdgeInsets.all(20),
+              padding: const EdgeInsets.all(
+                20,
+              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // Category badge
-                  if (product['category_name'] != null)
+                  if (product['category_name'] !=
+                      null)
                     Container(
                       padding: const EdgeInsets.symmetric(
                         horizontal: 12,
@@ -221,7 +354,9 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                       ),
                       decoration: BoxDecoration(
                         color: AppColors.accentSurface,
-                        borderRadius: BorderRadius.circular(20),
+                        borderRadius: BorderRadius.circular(
+                          20,
+                        ),
                       ),
                       child: Text(
                         product['category_name'],
@@ -230,16 +365,22 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                         ),
                       ),
                     ),
-                  const SizedBox(height: 12),
+                  const SizedBox(
+                    height: 12,
+                  ),
 
                   // Product name
                   Text(
                     product['name'],
                     style: AppTextStyles.headlineLarge(
-                      color: isDark ? AppColors.textPrimaryDark : null,
+                      color: isDark
+                          ? AppColors.textPrimaryDark
+                          : null,
                     ),
                   ),
-                  const SizedBox(height: 8),
+                  const SizedBox(
+                    height: 8,
+                  ),
 
                   // Rating (Placeholder if null)
                   Row(
@@ -249,51 +390,74 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                         color: AppColors.warning,
                         size: 18,
                       ),
-                      const SizedBox(width: 4),
+                      const SizedBox(
+                        width: 4,
+                      ),
                       Text(
                         '0.0', // TODO: Add rating to product details response or join
                         style: AppTextStyles.labelLarge(
-                          color: isDark ? AppColors.textPrimaryDark : null,
+                          color: isDark
+                              ? AppColors.textPrimaryDark
+                              : null,
                         ),
                       ),
                       Text(
                         ' (0 reviews)',
                         style: AppTextStyles.bodySmall(
-                          color: isDark ? AppColors.textSecondaryDark : null,
+                          color: isDark
+                              ? AppColors.textSecondaryDark
+                              : null,
                         ),
                       ),
                     ],
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(
+                    height: 16,
+                  ),
 
                   // Description
                   Text(
                     'Description',
                     style: AppTextStyles.titleLarge(
-                      color: isDark ? AppColors.textPrimaryDark : null,
+                      color: isDark
+                          ? AppColors.textPrimaryDark
+                          : null,
                     ),
                   ),
-                  const SizedBox(height: 8),
+                  const SizedBox(
+                    height: 8,
+                  ),
                   Text(
-                    product['description'] ?? 'No description available.',
+                    product['description'] ??
+                        'No description available.',
                     style: AppTextStyles.bodyMedium(
                       color: isDark
                           ? AppColors.textSecondaryDark
                           : AppColors.textSecondaryLight,
                     ),
                   ),
-                  const SizedBox(height: 24),
+                  const SizedBox(
+                    height: 24,
+                  ),
 
                   // Price Comparison / Available Stores
                   Text(
                     'Available at stores',
                     style: AppTextStyles.titleLarge(
-                      color: isDark ? AppColors.textPrimaryDark : null,
+                      color: isDark
+                          ? AppColors.textPrimaryDark
+                          : null,
                     ),
                   ),
-                  const SizedBox(height: 12),
-                  _buildStoreList(isDark),
-                  const SizedBox(height: 100),
+                  const SizedBox(
+                    height: 12,
+                  ),
+                  _buildStoreList(
+                    isDark,
+                  ),
+                  const SizedBox(
+                    height: 100,
+                  ),
                 ],
               ),
             ),
@@ -301,14 +465,23 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
         ],
       ),
       bottomNavigationBar: Container(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(
+          16,
+        ),
         decoration: BoxDecoration(
-          color: isDark ? AppColors.surfaceDark : AppColors.surfaceLight,
+          color: isDark
+              ? AppColors.surfaceDark
+              : AppColors.surfaceLight,
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.08),
+              color: Colors.black.withValues(
+                alpha: 0.08,
+              ),
               blurRadius: 16,
-              offset: const Offset(0, -4),
+              offset: const Offset(
+                0,
+                -4,
+              ),
             ),
           ],
         ),
@@ -323,36 +496,53 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                         ? AppColors.borderDark
                         : AppColors.borderLight,
                   ),
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(
+                    12,
+                  ),
                 ),
                 child: Row(
                   children: [
                     IconButton(
                       onPressed: () {
-                        if (_quantity > 1) setState(() => _quantity--);
+                        if (_quantity >
+                            1) {
+                          setState(
+                            () => _quantity--,
+                          );
+                        }
                       },
                       icon: Icon(
                         Icons.remove,
-                        color: isDark ? AppColors.textPrimaryDark : null,
+                        color: isDark
+                            ? AppColors.textPrimaryDark
+                            : null,
                       ),
                     ),
                     Text(
                       '$_quantity',
                       style: AppTextStyles.titleMedium(
-                        color: isDark ? AppColors.textPrimaryDark : null,
+                        color: isDark
+                            ? AppColors.textPrimaryDark
+                            : null,
                       ),
                     ),
                     IconButton(
-                      onPressed: () => setState(() => _quantity++),
+                      onPressed: () => setState(
+                        () => _quantity++,
+                      ),
                       icon: Icon(
                         Icons.add,
-                        color: isDark ? AppColors.textPrimaryDark : null,
+                        color: isDark
+                            ? AppColors.textPrimaryDark
+                            : null,
                       ),
                     ),
                   ],
                 ),
               ),
-              const SizedBox(width: 16),
+              const SizedBox(
+                width: 16,
+              ),
               // Add to cart button
               Expanded(
                 child: AnimatedButton(
@@ -375,7 +565,9 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                               size: 20,
                               color: Colors.white,
                             ),
-                            SizedBox(width: 8),
+                            SizedBox(
+                              width: 8,
+                            ),
                             Text(
                               'Add to Cart',
                               style: TextStyle(
@@ -394,80 +586,128 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
     );
   }
 
-  Widget _buildStoreList(bool isDark) {
+  Widget _buildStoreList(
+    bool isDark,
+  ) {
     if (_stores.isEmpty) {
       return Text(
         'Not available nearby',
-        style: AppTextStyles.bodyMedium(color: AppColors.error),
+        style: AppTextStyles.bodyMedium(
+          color: AppColors.error,
+        ),
       );
     }
 
     return Column(
-      children: _stores.map((store) {
-        final isAvailable =
-            store['is_available'] == true && (store['stock_count'] ?? 0) > 0;
-        return Container(
-          margin: const EdgeInsets.only(bottom: 8),
-          padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(
-            color: isDark ? AppColors.surfaceDark : AppColors.surfaceLight,
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(
-              color: isDark ? AppColors.borderDark : AppColors.borderLight,
+      children: _stores.map(
+        (
+          store,
+        ) {
+          final isAvailable =
+              store['is_available'] ==
+                  true &&
+              (store['stock_count'] ??
+                      0) >
+                  0;
+          return Container(
+            margin: const EdgeInsets.only(
+              bottom: 8,
             ),
-          ),
-          child: Row(
-            children: [
-              Container(
-                width: 40,
-                height: 40,
-                decoration: BoxDecoration(
-                  color: AppColors.primarySurface,
-                  borderRadius: BorderRadius.circular(8),
-                  image: store['logo_url'] != null
-                      ? DecorationImage(image: NetworkImage(store['logo_url']))
+            padding: const EdgeInsets.all(
+              12,
+            ),
+            decoration: BoxDecoration(
+              color: isDark
+                  ? AppColors.surfaceDark
+                  : AppColors.surfaceLight,
+              borderRadius: BorderRadius.circular(
+                12,
+              ),
+              border: Border.all(
+                color: isDark
+                    ? AppColors.borderDark
+                    : AppColors.borderLight,
+              ),
+            ),
+            child: Row(
+              children: [
+                Container(
+                  width: 40,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    color: AppColors.primarySurface,
+                    borderRadius: BorderRadius.circular(
+                      8,
+                    ),
+                    image:
+                        store['logo_url'] !=
+                            null
+                        ? DecorationImage(
+                            image: NetworkImage(
+                              store['logo_url'],
+                            ),
+                          )
+                        : null,
+                  ),
+                  child:
+                      store['logo_url'] ==
+                          null
+                      ? const Icon(
+                          Icons.store,
+                          color: AppColors.primary,
+                        )
                       : null,
                 ),
-                child: store['logo_url'] == null
-                    ? const Icon(Icons.store, color: AppColors.primary)
-                    : null,
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                const SizedBox(
+                  width: 12,
+                ),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        store['name'] ??
+                            'Unknown Store',
+                        style: AppTextStyles.titleSmall(
+                          color: isDark
+                              ? AppColors.textPrimaryDark
+                              : null,
+                        ),
+                      ),
+                      if (store['distance'] !=
+                          null)
+                        Text(
+                          '${(store['distance'] / 1000).toStringAsFixed(1)} km away',
+                          style: AppTextStyles.bodySmall(
+                            color: isDark
+                                ? AppColors.textSecondaryDark
+                                : null,
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     Text(
-                      store['name'] ?? 'Unknown Store',
-                      style: AppTextStyles.titleSmall(
-                        color: isDark ? AppColors.textPrimaryDark : null,
-                      ),
+                      '₹${store['price']}',
+                      style: AppTextStyles.price(),
                     ),
-                    if (store['distance'] != null)
+                    if (!isAvailable)
                       Text(
-                        '${(store['distance'] / 1000).toStringAsFixed(1)} km away',
-                        style: AppTextStyles.bodySmall(
-                          color: isDark ? AppColors.textSecondaryDark : null,
+                        'Out of Stock',
+                        style: AppTextStyles.labelSmall(
+                          color: AppColors.error,
                         ),
                       ),
                   ],
                 ),
-              ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Text('₹${store['price']}', style: AppTextStyles.price()),
-                  if (!isAvailable)
-                    Text(
-                      'Out of Stock',
-                      style: AppTextStyles.labelSmall(color: AppColors.error),
-                    ),
-                ],
-              ),
-            ],
-          ),
-        );
-      }).toList(),
+              ],
+            ),
+          );
+        },
+      ).toList(),
     );
   }
 }

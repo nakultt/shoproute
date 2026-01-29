@@ -9,9 +9,15 @@ class AppTheme {
   AppTheme._();
 
   // Animation Durations
-  static const Duration animationFast = Duration(milliseconds: 150);
-  static const Duration animationNormal = Duration(milliseconds: 300);
-  static const Duration animationSlow = Duration(milliseconds: 350);
+  static const Duration animationFast = Duration(
+    milliseconds: 150,
+  );
+  static const Duration animationNormal = Duration(
+    milliseconds: 300,
+  );
+  static const Duration animationSlow = Duration(
+    milliseconds: 350,
+  );
 
   // Animation Curves
   static const Curve animationCurve = Curves.easeInOut;
@@ -35,27 +41,51 @@ class AppTheme {
   static const double spacingXxl = 48.0;
 
   // Shadows
-  static List<BoxShadow> shadowSm = [
+  static List<
+    BoxShadow
+  >
+  shadowSm = [
     BoxShadow(
-      color: Colors.black.withOpacity(0.05),
+      color: Colors.black.withValues(
+        alpha: 0.05,
+      ),
       blurRadius: 4,
-      offset: const Offset(0, 2),
+      offset: const Offset(
+        0,
+        2,
+      ),
     ),
   ];
 
-  static List<BoxShadow> shadowMd = [
+  static List<
+    BoxShadow
+  >
+  shadowMd = [
     BoxShadow(
-      color: Colors.black.withOpacity(0.08),
+      color: Colors.black.withValues(
+        alpha: 0.08,
+      ),
       blurRadius: 8,
-      offset: const Offset(0, 4),
+      offset: const Offset(
+        0,
+        4,
+      ),
     ),
   ];
 
-  static List<BoxShadow> shadowLg = [
+  static List<
+    BoxShadow
+  >
+  shadowLg = [
     BoxShadow(
-      color: Colors.black.withOpacity(0.1),
+      color: Colors.black.withValues(
+        alpha: 0.1,
+      ),
       blurRadius: 16,
-      offset: const Offset(0, 8),
+      offset: const Offset(
+        0,
+        8,
+      ),
     ),
   ];
 
@@ -91,7 +121,9 @@ class AppTheme {
       cardTheme: CardThemeData(
         elevation: 0,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(radiusMd),
+          borderRadius: BorderRadius.circular(
+            radiusMd,
+          ),
         ),
         color: AppColors.surfaceLight,
       ),
@@ -100,9 +132,14 @@ class AppTheme {
           elevation: 0,
           backgroundColor: AppColors.primary,
           foregroundColor: Colors.white,
-          minimumSize: const Size(double.infinity, 52),
+          minimumSize: const Size(
+            double.infinity,
+            52,
+          ),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(radiusMd),
+            borderRadius: BorderRadius.circular(
+              radiusMd,
+            ),
           ),
           textStyle: GoogleFonts.inter(
             fontSize: 16,
@@ -113,10 +150,18 @@ class AppTheme {
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
           foregroundColor: AppColors.primary,
-          minimumSize: const Size(double.infinity, 52),
-          side: const BorderSide(color: AppColors.primary, width: 1.5),
+          minimumSize: const Size(
+            double.infinity,
+            52,
+          ),
+          side: const BorderSide(
+            color: AppColors.primary,
+            width: 1.5,
+          ),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(radiusMd),
+            borderRadius: BorderRadius.circular(
+              radiusMd,
+            ),
           ),
           textStyle: GoogleFonts.inter(
             fontSize: 16,
@@ -141,20 +186,37 @@ class AppTheme {
           vertical: 16,
         ),
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(radiusMd),
-          borderSide: const BorderSide(color: AppColors.borderLight),
+          borderRadius: BorderRadius.circular(
+            radiusMd,
+          ),
+          borderSide: const BorderSide(
+            color: AppColors.borderLight,
+          ),
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(radiusMd),
-          borderSide: const BorderSide(color: AppColors.borderLight),
+          borderRadius: BorderRadius.circular(
+            radiusMd,
+          ),
+          borderSide: const BorderSide(
+            color: AppColors.borderLight,
+          ),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(radiusMd),
-          borderSide: const BorderSide(color: AppColors.primary, width: 2),
+          borderRadius: BorderRadius.circular(
+            radiusMd,
+          ),
+          borderSide: const BorderSide(
+            color: AppColors.primary,
+            width: 2,
+          ),
         ),
         errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(radiusMd),
-          borderSide: const BorderSide(color: AppColors.error),
+          borderRadius: BorderRadius.circular(
+            radiusMd,
+          ),
+          borderSide: const BorderSide(
+            color: AppColors.error,
+          ),
         ),
         hintStyle: GoogleFonts.inter(
           fontSize: 14,
@@ -164,9 +226,13 @@ class AppTheme {
       chipTheme: ChipThemeData(
         backgroundColor: AppColors.backgroundLight,
         selectedColor: AppColors.primarySurface,
-        labelStyle: GoogleFonts.inter(fontSize: 12),
+        labelStyle: GoogleFonts.inter(
+          fontSize: 12,
+        ),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(radiusFull),
+          borderRadius: BorderRadius.circular(
+            radiusFull,
+          ),
         ),
       ),
       bottomNavigationBarTheme: const BottomNavigationBarThemeData(
@@ -187,16 +253,24 @@ class AppTheme {
       ),
       snackBarTheme: SnackBarThemeData(
         backgroundColor: AppColors.textPrimaryLight,
-        contentTextStyle: GoogleFonts.inter(color: Colors.white),
+        contentTextStyle: GoogleFonts.inter(
+          color: Colors.white,
+        ),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(radiusSm),
+          borderRadius: BorderRadius.circular(
+            radiusSm,
+          ),
         ),
         behavior: SnackBarBehavior.floating,
       ),
       bottomSheetTheme: const BottomSheetThemeData(
         backgroundColor: AppColors.surfaceLight,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(top: Radius.circular(radiusXl)),
+          borderRadius: BorderRadius.vertical(
+            top: Radius.circular(
+              radiusXl,
+            ),
+          ),
         ),
       ),
     );
@@ -234,7 +308,9 @@ class AppTheme {
       cardTheme: CardThemeData(
         elevation: 0,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(radiusMd),
+          borderRadius: BorderRadius.circular(
+            radiusMd,
+          ),
         ),
         color: AppColors.surfaceDark,
       ),
@@ -243,9 +319,14 @@ class AppTheme {
           elevation: 0,
           backgroundColor: AppColors.primaryLight,
           foregroundColor: Colors.white,
-          minimumSize: const Size(double.infinity, 52),
+          minimumSize: const Size(
+            double.infinity,
+            52,
+          ),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(radiusMd),
+            borderRadius: BorderRadius.circular(
+              radiusMd,
+            ),
           ),
           textStyle: GoogleFonts.inter(
             fontSize: 16,
@@ -256,10 +337,18 @@ class AppTheme {
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
           foregroundColor: AppColors.primaryLight,
-          minimumSize: const Size(double.infinity, 52),
-          side: const BorderSide(color: AppColors.primaryLight, width: 1.5),
+          minimumSize: const Size(
+            double.infinity,
+            52,
+          ),
+          side: const BorderSide(
+            color: AppColors.primaryLight,
+            width: 1.5,
+          ),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(radiusMd),
+            borderRadius: BorderRadius.circular(
+              radiusMd,
+            ),
           ),
           textStyle: GoogleFonts.inter(
             fontSize: 16,
@@ -275,16 +364,29 @@ class AppTheme {
           vertical: 16,
         ),
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(radiusMd),
-          borderSide: const BorderSide(color: AppColors.borderDark),
+          borderRadius: BorderRadius.circular(
+            radiusMd,
+          ),
+          borderSide: const BorderSide(
+            color: AppColors.borderDark,
+          ),
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(radiusMd),
-          borderSide: const BorderSide(color: AppColors.borderDark),
+          borderRadius: BorderRadius.circular(
+            radiusMd,
+          ),
+          borderSide: const BorderSide(
+            color: AppColors.borderDark,
+          ),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(radiusMd),
-          borderSide: const BorderSide(color: AppColors.primaryLight, width: 2),
+          borderRadius: BorderRadius.circular(
+            radiusMd,
+          ),
+          borderSide: const BorderSide(
+            color: AppColors.primaryLight,
+            width: 2,
+          ),
         ),
         hintStyle: GoogleFonts.inter(
           fontSize: 14,
@@ -304,16 +406,24 @@ class AppTheme {
       ),
       snackBarTheme: SnackBarThemeData(
         backgroundColor: AppColors.surfaceElevatedDark,
-        contentTextStyle: GoogleFonts.inter(color: AppColors.textPrimaryDark),
+        contentTextStyle: GoogleFonts.inter(
+          color: AppColors.textPrimaryDark,
+        ),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(radiusSm),
+          borderRadius: BorderRadius.circular(
+            radiusSm,
+          ),
         ),
         behavior: SnackBarBehavior.floating,
       ),
       bottomSheetTheme: const BottomSheetThemeData(
         backgroundColor: AppColors.surfaceDark,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(top: Radius.circular(radiusXl)),
+          borderRadius: BorderRadius.vertical(
+            top: Radius.circular(
+              radiusXl,
+            ),
+          ),
         ),
       ),
     );

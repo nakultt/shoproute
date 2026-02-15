@@ -1,3 +1,5 @@
+import { Request } from "express";
+
 // TypeScript interfaces for ShopRoute
 
 // User types
@@ -229,12 +231,13 @@ export interface RouteOptimizationRequest {
   };
 }
 
-// Express extensions
-import { Request } from "express";
+
 
 export interface AuthenticatedRequest extends Request {
   user?: {
-    id: number;
+    userId: number; // Changed to match decoded JWT usually (payload often has userId/id)
+    id: number;     // Keeping both for compatibility if uncertain
     email: string;
+    role?: string;
   };
 }

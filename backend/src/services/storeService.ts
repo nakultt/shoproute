@@ -200,7 +200,7 @@ export const getAllStores = async (
 
   const result = await query(queryText, params);
 
-  const stores = result.rows.map((store) => ({
+  const stores = result.rows.map((store: any) => ({
     ...store,
     distance_km: store.distance ? (store.distance / 1000).toFixed(2) : null,
   }));

@@ -3,12 +3,36 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
+const isProduction = process.env.NODE_ENV === "production";
+
+// Prioritize specific connection strings:
+// 1. DATABASE_URL (Render sets this automatically)
+// 2. DATABASE_URL_PROD (Explicit prod config)
+// 3. DATABASE_URL_DEV (Explicit dev config)
+const connectionString =
+  process.env.DATABASE_URL ||
+  (isProduction ? process.env.DATABASE_URL_PROD : process.env.DATABASE_URL_DEV);
+
+const poolConfig = connectionString
+  ? {
+      connectionString,
+      ssl:
+        isProduction || connectionString.includes("render.com")
+          ? {
+              rejectUnauthorized: false,
+            }
+          : undefined,
+    }
+  : {
+      host: process.env.DB_HOST || "localhost",
+      port: parseInt(process.env.DB_PORT || "5432"),
+      database: process.env.DB_NAME || "shoproute",
+      user: process.env.DB_USER || "postgres",
+      password: process.env.DB_PASSWORD,
+    };
+
 const pool = new Pool({
-  host: process.env.DB_HOST || "localhost",
-  port: parseInt(process.env.DB_PORT || "5432"),
-  database: process.env.DB_NAME || "shoproute",
-  user: process.env.DB_USER || "postgres",
-  password: process.env.DB_PASSWORD,
+  ...poolConfig,
   max: 20,
   idleTimeoutMillis: 30000,
   connectionTimeoutMillis: 2000,

@@ -310,7 +310,7 @@ export const calculateShoppingCost = async (
         store_id: storeId,
         store_name: items[0].store_name,
         items,
-        subtotal: items.reduce((sum, i) => sum + i.item_total, 0),
+        subtotal: items.reduce((sum, i: any) => sum + i.item_total, 0),
       })
     );
 

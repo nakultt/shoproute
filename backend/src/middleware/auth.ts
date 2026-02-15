@@ -34,6 +34,7 @@ export const authMiddleware = (
     };
 
     req.user = {
+      userId: decoded.id,
       id: decoded.id,
       email: decoded.email,
     };
@@ -77,6 +78,7 @@ export const optionalAuthMiddleware = (
           email: string;
         };
         req.user = {
+          userId: decoded.id,
           id: decoded.id,
           email: decoded.email,
         };

@@ -186,7 +186,7 @@ export const generateSubstitutions = async (
 
     const availableProducts = similarProducts.rows
       .map(
-        (p) =>
+        (p: any) =>
           `${p.name} (${p.brand || "No brand"}) - $${parseFloat(
             p.price
           ).toFixed(2)}`
@@ -233,7 +233,7 @@ Similarity score should be between 0 and 1, where 1 is most similar.`;
     // Match with actual products
     for (const suggestion of suggestions) {
       const match = similarProducts.rows.find(
-        (p) =>
+        (p: any) =>
           p.name.toLowerCase().includes(suggestion.name.toLowerCase()) ||
           suggestion.name.toLowerCase().includes(p.name.toLowerCase())
       );

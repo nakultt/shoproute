@@ -18,7 +18,7 @@ export const getCart = async (userId: number) => {
   let subtotal = 0;
   let savings = 0;
 
-  result.rows.forEach((item) => {
+  result.rows.forEach((item: any) => {
     subtotal += item.price * item.quantity;
     if (item.compare_at_price) {
       savings += (item.compare_at_price - item.price) * item.quantity;

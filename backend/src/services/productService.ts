@@ -243,7 +243,7 @@ export const getPersonalizedRecommendations = async (userId: number) => {
          GROUP BY p.id, c.name
          ORDER BY review_count DESC
          LIMIT 20`,
-      [favorites.rows.map((f) => f.item_id), userId]
+      [favorites.rows.map((f: any) => f.item_id), userId]
     );
   } else {
     // Default: trending products

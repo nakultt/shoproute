@@ -20,7 +20,7 @@ async function debug() {
     );
 
     console.log(`Found ${productResults.rows.length} products:`);
-    productResults.rows.forEach(p => console.log(` - ID: ${p.id}, Name: ${p.name}`));
+    productResults.rows.forEach((p: any) => console.log(` - ID: ${p.id}, Name: ${p.name}`));
 
     if (productResults.rows.length === 0) {
         console.log("!!! NO PRODUCTS FOUND !!!");
@@ -30,7 +30,7 @@ async function debug() {
         return;
     }
 
-    const allProductIds = productResults.rows.map(p => p.id);
+    const allProductIds = productResults.rows.map((p: any) => p.id);
 
     // 2. Check Stores
     console.log(`Checking stores for product IDs: ${allProductIds.join(", ")}`);
@@ -45,7 +45,7 @@ async function debug() {
     );
 
     console.log(`Found ${stores.rows.length} stores with these products:`);
-    stores.rows.forEach(s => console.log(` - Store: ${s.name} (IDs: ${s.pids.join(", ")})`));
+    stores.rows.forEach((s: any) => console.log(` - Store: ${s.name} (IDs: ${s.pids.join(", ")})`));
 
     if (stores.rows.length === 0) {
         console.log("!!! NO STORES FOUND WITH THESE PRODUCTS !!!");

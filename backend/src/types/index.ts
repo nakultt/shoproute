@@ -233,7 +233,7 @@ export interface RouteOptimizationRequest {
 
 
 
-export interface AuthenticatedRequest extends Request {
+export interface AuthenticatedRequest<P = any, ResBody = any, ReqBody = any, ReqQuery = any> extends Request<P, ResBody, ReqBody, ReqQuery> {
   user?: {
     userId: number; // Changed to match decoded JWT usually (payload often has userId/id)
     id: number;     // Keeping both for compatibility if uncertain

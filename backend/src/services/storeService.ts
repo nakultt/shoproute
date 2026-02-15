@@ -32,7 +32,7 @@ export const getNearbyStores = async (
 
   const result = await query(queryText, params);
 
-  return result.rows.map((store) => ({
+  return result.rows.map((store: any) => ({
     ...store,
     distance: Math.round(store.distance),
     distance_km: (store.distance / 1000).toFixed(2),
@@ -72,7 +72,7 @@ export const getStoresWithProduct = async (
 
   const result = await query(queryText, params);
 
-  return result.rows.map((store) => ({
+  return result.rows.map((store: any) => ({
     ...store,
     distance_km: store.distance ? (store.distance / 1000).toFixed(2) : null,
   }));

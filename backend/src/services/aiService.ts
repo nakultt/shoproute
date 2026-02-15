@@ -217,7 +217,7 @@ export const generateChatResponse = async (
                     functionResponse: {
                         name: "find_stores",
                         response: {
-                           stores: stores.map(s => ({ name: s.name, distance: s.distance_km + "km", address: s.address }))
+                           stores: stores.map((s: any) => ({ name: s.name, distance: s.distance_km + "km", address: s.address }))
                         }
                     }
                 }
@@ -242,7 +242,7 @@ export const generateChatResponse = async (
                     functionResponse: {
                         name: "view_cart",
                         response: {
-                           items: cart.items.map(i => `${i.quantity}x ${i.product_name} from ${i.store_name}`),
+                           items: cart.items.map((i: any) => `${i.quantity}x ${i.product_name} from ${i.store_name}`),
                            total: cart.subtotal
                         }
                     }
@@ -509,7 +509,7 @@ export const optimizeShoppingRoute = async (
         productMap.set(name.toLowerCase(), matches.map(m => m.id));
     });
 
-    const allProductIds = productResults.rows.map((p) => p.id);
+    const allProductIds = productResults.rows.map((p: any) => p.id);
 
     // 2. Find stores that carry these products
     const stores = await query(
@@ -539,7 +539,7 @@ export const optimizeShoppingRoute = async (
     
     // Helper to get Store ID from name fuzzy match
     const findStoreIdByName = (name: string) => {
-        const s = stores.rows.find(row => row.name.toLowerCase().includes(name.toLowerCase()));
+        const s = stores.rows.find((row: any) => row.name.toLowerCase().includes(name.toLowerCase()));
         return s ? s.id : null;
     };
 
@@ -550,7 +550,7 @@ export const optimizeShoppingRoute = async (
         const possibleIds = productMap.get(productKey) || [];
 
         if (targetStoreId && possibleIds.length > 0) {
-            const storeRow = stores.rows.find(r => r.id === targetStoreId);
+            const storeRow = stores.rows.find((r: any) => r.id === targetStoreId);
             // Check if store actually has the item
             const hasItem = storeRow.product_ids.some((pid: number) => possibleIds.includes(pid));
             
@@ -648,45 +648,38 @@ export const optimizeShoppingRoute = async (
         routeData.duration = totalDist / 10;
     }
 
-    const stops: RouteStop[] = selectedStores.map(
-      (store: any, index: number) => {
-        const storeProducts = productResults.rows
-           .filter((p) => store.product_ids.includes(p.id)) 
-           .filter((p) => productNames.some(reqName => p.name.toLowerCase().includes(reqName.toLowerCase())))
-           .map((p) => {
-            const priceInfo = store.products.find(
-              (sp: any) => sp.product_id === p.id
-            );
-            return {
-              ...p,
-              price: priceInfo?.price || 0,
-              stock_count: priceInfo?.stock_count || 0,
-            };
-          });
+    const stops: RouteStop[] = selectedStores.map((store: any, index: number) => {
+      const storeProducts = productResults.rows
+        .filter((p: any) => store.product_ids.includes(p.id))
+        .filter((p: any) => productNames.some((reqName: string) => p.name.toLowerCase().includes(reqName.toLowerCase())))
+        .map((p: any) => {
+          const priceInfo = store.products.find((sp: any) => sp.product_id === p.id);
+          return {
+            ...p,
+            price: priceInfo?.price || 0,
+            stock_count: priceInfo?.stock_count || 0,
+          };
+        });
 
-        return {
-          store: {
-            id: store.id,
-            name: store.name,
-            logo_url: store.logo_url,
-            address: store.address,
-            rating: store.rating,
-            location: { latitude: store.latitude, longitude: store.longitude },
-            is_active: true,
-            review_count: 0,
-            created_at: new Date(),
-            updated_at: new Date(),
-            distance: store.distance,
-          },
-          products: storeProducts,
-          subtotal: storeProducts.reduce(
-            (sum: number, p: any) => sum + p.price,
-            0
-          ),
-          order: index + 1,
-        };
-      }
-    );
+      return {
+        store: {
+          id: store.id,
+          name: store.name,
+          logo_url: store.logo_url,
+          address: store.address,
+          rating: store.rating,
+          location: { latitude: store.latitude, longitude: store.longitude },
+          is_active: true,
+          review_count: 0,
+          created_at: new Date(),
+          updated_at: new Date(),
+          distance: store.distance,
+        },
+        products: storeProducts,
+        subtotal: storeProducts.reduce((sum: number, p: any) => sum + p.price, 0),
+        order: index + 1,
+      } as RouteStop;
+    });
 
     return {
       stops,

@@ -271,7 +271,7 @@ router.post("/login", async (req, res: Response) => {
 
     // Generate JWT
     const token = jwt.sign({ id: user.id, email: user.email }, JWT_SECRET, {
-      expiresIn: JWT_EXPIRES_IN,
+      expiresIn: JWT_EXPIRES_IN as any,
     });
 
     // Remove password_hash from response

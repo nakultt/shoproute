@@ -5,7 +5,12 @@ import '../../../../config/constants/api_endpoints.dart';
 class StoreService {
   final ApiClient _apiClient = ApiClient.instance;
 
-  Future<List<dynamic>> getNearbyStores({
+  Future<
+    List<
+      dynamic
+    >
+  >
+  getNearbyStores({
     required double lat,
     required double lng,
     double radius = 5000,
@@ -13,41 +18,125 @@ class StoreService {
     try {
       final response = await _apiClient.get(
         ApiEndpoints.nearbyStores,
-        queryParameters: {'lat': lat, 'lng': lng, 'radius': radius},
+        queryParameters: {
+          'lat': lat,
+          'lng': lng,
+          'radius': radius,
+        },
       );
 
-      if (response.data['success'] == true) {
+      if (response.data['success'] ==
+          true) {
         return response.data['data'];
       } else {
-        throw Exception(response.data['error'] ?? 'Failed to fetch stores');
+        throw Exception(
+          response.data['error'] ??
+              'Failed to fetch stores',
+        );
       }
-    } on DioException catch (e) {
-      throw Exception(e.response?.data['error'] ?? 'Connection failed');
+    } on DioException catch (
+      e
+    ) {
+      throw Exception(
+        e.response?.data['error'] ??
+            'Connection failed',
+      );
     }
   }
 
-  Future<Map<String, dynamic>> getStoreDetails(
+  Future<
+    List<
+      dynamic
+    >
+  >
+  getStores({
+    String? search,
+  }) async {
+    try {
+      final response = await _apiClient.get(
+        ApiEndpoints.stores,
+        queryParameters: {
+          if (search !=
+              null)
+            'search': search,
+        },
+      );
+
+      if (response.data['success'] ==
+          true) {
+        // Adjust based on actual API response structure (items list vs direct list)
+        final data = response.data['data'];
+        if (data
+                is Map &&
+            data.containsKey(
+              'items',
+            )) {
+          return data['items'];
+        } else if (data
+            is List) {
+          return data;
+        }
+        return [];
+      } else {
+        throw Exception(
+          response.data['error'] ??
+              'Failed to fetch stores',
+        );
+      }
+    } on DioException catch (
+      e
+    ) {
+      throw Exception(
+        e.response?.data['error'] ??
+            'Connection failed',
+      );
+    }
+  }
+
+  Future<
+    Map<
+      String,
+      dynamic
+    >
+  >
+  getStoreDetails(
     int id, {
     double? lat,
     double? lng,
   }) async {
     try {
       final response = await _apiClient.get(
-        ApiEndpoints.storeById(id),
-        queryParameters: lat != null && lng != null
-            ? {'lat': lat, 'lng': lng}
+        ApiEndpoints.storeById(
+          id,
+        ),
+        queryParameters:
+            lat !=
+                    null &&
+                lng !=
+                    null
+            ? {
+                'lat': lat,
+                'lng': lng,
+              }
             : null,
       );
 
-      if (response.data['success'] == true) {
+      if (response.data['success'] ==
+          true) {
         return response.data['data'];
       } else {
         throw Exception(
-          response.data['error'] ?? 'Failed to fetch store details',
+          response.data['error'] ??
+              'Failed to fetch store details',
         );
       }
-    } on DioException catch (e) {
-      throw Exception(e.response?.data['error'] ?? 'Connection failed');
+    } on DioException catch (
+      e
+    ) {
+      throw Exception(
+        e.response?.data['error'] ??
+            'Connection failed',
+      );
     }
   }
 }

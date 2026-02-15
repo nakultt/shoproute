@@ -22,6 +22,8 @@ class MainScaffold
   createState() => _MainScaffoldState();
 }
 
+class _MainScaffoldState
+    extends
         State<
           MainScaffold
         > {
@@ -196,9 +198,6 @@ class MainScaffold
                           ),
                           badgeCount: count,
                           // keeping original icons/labels for now to minimize visual diff unless asked
-                          icon: Icons.bookmark_border_rounded,
-                          activeIcon: Icons.bookmark_rounded,
-                          label: 'Saved',
                         );
                       },
                 ),

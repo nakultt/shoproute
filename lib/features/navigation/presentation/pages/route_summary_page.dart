@@ -6,7 +6,7 @@ import '../../../../config/theme/app_colors.dart';
 import '../../../../config/theme/app_text_styles.dart';
 import '../../../../config/theme/app_theme.dart';
 import '../../data/navigation_service.dart';
-import '../../cart/data/cart_service.dart';
+import '../../../cart/data/cart_service.dart';
 
 class RouteSummaryPage
     extends

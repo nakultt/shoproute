@@ -6,10 +6,7 @@ class ApiEndpoints {
 
   // Base URL - Auto-switch between Prod and Dev
   static String get baseUrl {
-    if (kReleaseMode) {
-      return 'https://shoproute.onrender.com';
-    }
-    return 'http://10.0.2.2:3000'; // Default for Android Emulator
+    return 'https://shoproute.onrender.com';
   }
 
   static const String apiVersion = '/api';
